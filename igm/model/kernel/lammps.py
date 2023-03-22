@@ -296,7 +296,7 @@ def create_lammps_script(model, user_args):
                             'fix envelope{0} envgrp{0} ellipsoidalenvelope'.format(
                                 j),
                             ' '.join([str(x * envf)
-                                      for x in envelope.semiaxes]),
+                                      for x in envelope.semiaxes]),    # scaling semiaxes by 'envf' (>1) factor
                             envelope.k,
                             file=f
                         )
@@ -305,7 +305,7 @@ def create_lammps_script(model, user_args):
                     elif envelope.shape == 'exp_map':
 			#print(str(envelope.volume_file).format(j), file=f)
                         print(
-                            'fix envelope{0} envgrp{0} volumetricrestraint '.format(j) + str(envelope.volume_file), envelope.k, file=f
+                            'fix envelope{0} envgrp{0} volumetricrestraint '.format(j) + str(envelope.volume_file), envf, envelope.k, file=f
                         )
                         print('fix_modify envelope{} energy yes'.format(j), file=f)
 
@@ -433,11 +433,14 @@ def optimize(model, cfg):
         run_opts.update(cfg['optimization']['kernel_opts']['lammps'])
         # this is to set the random seed
         run_opts.update({'step_no': cfg.get('runtime/step_no', 1) + 2})
+
+        # convert python user defined "model" object into intermediate "LammpsModel" object
         m = LammpsModel(model)
- 
-        # write input .lam and .data files to be used in the minimization
+
+        # write input .lam (script) and .data files to be used in the minimization
         create_lammps_data(m, run_opts)
         create_lammps_script(m, run_opts)
+
 
         # run the lammps minimization
         with open(script_fname, 'r') as lamfile:

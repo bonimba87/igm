@@ -96,6 +96,7 @@ class FishAssignmentStep(Step):
         if     'tol'  not in cfg.get("runtime/FISH"):
             cfg["runtime"]["FISH"]["tol"]      = cfg.get("runtime/FISH/tol_list").pop(0)
 
+        # inherit all attributes and methods of parent class "Step"
         super(FishAssignmentStep, self).__init__(cfg)
 
 

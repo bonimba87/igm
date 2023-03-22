@@ -1,6 +1,5 @@
 #
-#  See Boninsegna et al, 2022, SI: Lamina DamID activtion step, for "sphere" and "ellipsoid".
-#                                                               "exp_map" is new implementation, Feb 2023
+#  See Boninsegna et al, 2022, SI: Lamina DamID activtions tep
 #
 
 
@@ -16,7 +15,7 @@ from ..utils.log import logger
 from tqdm import tqdm
 import shutil
 from ..utils.files import make_absolute_path
-from ..utils import VolumeFile
+
 
 try:
     # python 2 izip
@@ -35,6 +34,7 @@ damid_actdist_shape = [
 damid_actdist_fmt_str = "%6d %.5f %.5f"
 
 # --- AUXILIARY FUNCTIONS FOR COMPUTING DAMID RELATED BEAD-ENVELOPE CALCULATIONS ---#
+
 
 def snormsq_sphere(x, R, r):
 
@@ -75,51 +75,16 @@ def snormsq_ellipse(x, semiaxes, r):
     sq = np.square(x)
     return sq[:, 0]/(a**2) + sq[:, 1]/(b**2) + sq[:, 2]/(c**2)
 
-
-def snormsq_exp(x, volume):
- 
-    """
-    Compute the distance of a bead to a lamina that is defined via a grid
-
-    INPUT
-      * x, numpy array (len(where_vol), 3)
-      * volume, VolumeFile object
- 
-    OUTPUT 
-       * distanze (list of len(where_vol)  distance (squared!) values)
-    """
-
-     
-    distanze = []
-    
-    voxel_xyz = np.round(np.array((x - volume.origin)/volume.grid)).astype(int)  # voxel coordinates are integer numbers
-    
-    
-    # loop over structures
-    for k in range(voxel_xyz.shape[0]):
-    
-        # if voxel is inside the grid...
-        if (voxel_xyz[k] >= np.zeros(3)).all()  and (voxel_xyz[k] < volume.nvoxel).all():
-
-            # compute distance squared
-            distanze.append(np.dot((voxel_xyz[k] - volume.matrice[tuple(voxel_xyz[k])]) * volume.grid,\
-                                   (voxel_xyz[k] - volume.matrice[tuple(voxel_xyz[k])]) * volume.grid))   # distance bead 
-                                                                                                  # surface - surface
-        else:
-            distanze.append(np.dot((voxel_xyz[k] - volume.center) * volume.grid, \
-                                   (voxel_xyz[k] - volume.center) * volume.grid))     # distance to the center of the grid (if nucleoli aut similia)
-
-    return distanze
-
-
-# functions (sphere, ellipsoid or experimental map) are put together into "snormsq" which takes the shape as an input, returns distances to lamina in three setups
+# functions (sphere or ellipsoid) are put together into "snormsq" which takes the shape as an input
 snormsq = {
-    'sphere':    snormsq_sphere,
-    'ellipsoid': snormsq_ellipse,
-    'exp_map':   snormsq_exp
-          }
+    'sphere': snormsq_sphere,
+    'ellipsoid': snormsq_ellipse
+}
+
+
 
 class DamidActivationDistanceStep(Step):
+
     def __init__(self, cfg):
 
         """ The value of DAMID sigma to be used this time around is computed and stored """
@@ -163,6 +128,8 @@ class DamidActivationDistanceStep(Step):
         input_profile = self.cfg.get("restraints/DamID/input_profile")
 
         last_damidactdist_file = self.cfg.get('runtime/DamID').get("damid_actdist_file", None)
+        logger.info(last_damidactdist_file)
+
         batch_size = self.cfg.get('restraints/DamID/batch_size', 100)
 
         self.tmp_extensions = [".npy", ".tmp"]
@@ -184,7 +151,7 @@ class DamidActivationDistanceStep(Step):
         if last_damidactdist_file is not None:
       
             with h5py.File(last_damidactdist_file) as h5f:        
-                last_prob = {int(i) : p for i, p in zip(h5f["loc"], h5f["prob"])}  #-LB this is correct, it is a dictionary, not  a list (also see below)
+                last_prob = {int(i) : p for i, p in zip(h5f["loc"], h5f["prob"])}  #-LB this is not correct, because we are selecting the same haploid copy multiple times, this is not consistent with the numbering in "ii" at all
         else:
                 last_prob = {}
 
@@ -201,7 +168,7 @@ class DamidActivationDistanceStep(Step):
             end = min((b+1) * batch_size, len(ii))
             params = np.array(
                 [
-                    ( ii[k], p_exp[k], last_prob.get(ii[k], 0.) )   # last_prob is a dictionary, such that last_prob[ii[k]] is the probability value associated with entry ii[k]. This way we circumvent the haploid v diploid enumeration which would make it inconsistent.
+                    ( ii[k], p_exp[k], last_prob.get(ii[k], 0.) )
                     for k in range(start, end)
                 ],
                 dtype=np.float32
@@ -217,19 +184,13 @@ class DamidActivationDistanceStep(Step):
 
         """ Compute damid activation distances for batch of loci identified by parameter batch_id, and save to "out.npy" files """
 
-        nucleus_parameters  = None
-        volumes_idx         = None
-        volume_prefix       = None
-
+        nucleus_parameters = None
         shape = cfg.get('model/restraints/envelope/nucleus_shape')
 
         if shape == 'sphere':
             nucleus_parameters = cfg.get('model/restraints/envelope/nucleus_radius')
         elif shape == 'ellipsoid':
             nucleus_parameters = cfg.get('model/restraints/envelope/nucleus_semiaxes')
-        elif shape == 'exp_map':    # map(s) from experiments
-            volumes_idx   = cfg.get('model/restraints/envelope/volumes_idx')      # indexes identifying volume maps
-            volume_prefix = cfg.get('model/restraints/envelope/volume_prefix')    # prefix of volume map file
         else:
             raise NotImplementedError('DamID restraint for shape %s has not been implemented yet.' % shape)
 
@@ -239,39 +200,23 @@ class DamidActivationDistanceStep(Step):
  
         with HssFile(cfg.get("optimization/structure_output"), 'r') as hss:
 
-            # data BATCH IN: read params from temporary damid.in.npy files
+            # read params from temporary damid.in.npy files
             fname = os.path.join(tmp_dir, '%d.damid.in.npy' % batch_id)
             params = np.load(fname)
 
             # compute DamID  activdation distance into corresponding output to save to out.tmp file
             results = []
-
-            if shape == 'sphere' or 'shape' == 'ellipsoid':
- 
-                 for I, p_exp, plast in params:
-                    res = get_damid_actdist_I(
+            for I, p_exp, plast in params:
+                res = get_damid_actdist(
                     int(I), p_exp, plast, hss, it_corr,
-                    contact_range = cfg.get('restraints/DamID/contact_range', 0.05),
+                    contact_range=cfg.get('restraints/DamID/contact_range', 0.05),
                     shape=shape,
-                    nucleus_param=nucleus_parameters 
-                    )
-
-                    results += res #(i, damid_actdist_i, p_i)
-
-            elif shape == 'exp_map':
-
-                 n_struct = hss.get_nstruct()
-                 copy_index = hss.get_index().copy_index
-                 
-                 volumes_idx   = cfg.get('model/restraints/envelope/volumes_idx')
-                 volume_prefix = cfg.get('model/restraints/envelope/volume_prefix') 
-
-                 results = get_damid_actdist_exp(params, hss, n_struct, copy_index, it_corr, contact_range = cfg.get('restraints/DamID/contact_range', 0.95),
-                                             volumes_idx = volumes_idx, volume_prefix = volume_prefix)
-                 
+                    nucleus_param=nucleus_parameters
+                )
+                results += res #(i, damid_actdist_i, p_i)
             #-
 
-        # data BATCH out: save output for this chunk to file, using the format specified by string 'damid_actdist_fmt_str'
+        # save output for this chunk to file, using the format specified by string 'damid_actdist_fmt_str'
         fname = os.path.join(tmp_dir, '%d.out.tmp' % batch_id)
         with open(fname, 'w') as f:
             f.write('\n'.join([damid_actdist_fmt_str % x for x in results]))
@@ -284,9 +229,11 @@ class DamidActivationDistanceStep(Step):
         # create filename
         damid_actdist_file = os.path.join(self.tmp_dir, "damid_actdist.hdf5")
         last_damidactdist_file = self.cfg['runtime']['DamID'].get("damid_actdist_file", None)   # stored from the previous iteration
+ 
+        logger.info(last_damidactdist_file)
 
-        loc  = []
-        dist = [] 
+        loc = []
+        dist = []
         prob = []
 
         # (also see 'reduce' step in ActivationDistanceStep.py) Read in all .out.tmp files and concatenate all data into a single
@@ -309,16 +256,16 @@ class DamidActivationDistanceStep(Step):
         additional_data = []
         if 'DamID' in self.cfg['runtime']:
             additional_data.append(
-                'DamID_{:.4f}'.format(self.cfg['runtime']['DamID']['sigma']))
+                'DamID_{:.2f}'.format(self.cfg['runtime']['DamID']['sigma']))
         if 'opt_iter' in self.cfg['runtime']:
             additional_data.append(
                 'iter_{}'.format(
-                    self.cfg['runtime']['opt_iter'] -1    #-LB need to reduce iteration number by 1 for consistency
+                    self.cfg['runtime']['opt_iter']-1    #-LB need to reduce iteration number by 1 for consistency
                 )
             )
-       
+        
         tmp_damid_actdist_file = damid_actdist_file + '.tmp'
- 
+
         #... write to tmp damid actdist file
         with h5py.File(tmp_damid_actdist_file, "w") as h5f:
             h5f.create_dataset("loc", data=np.concatenate(loc))
@@ -326,9 +273,11 @@ class DamidActivationDistanceStep(Step):
             h5f.create_dataset("prob", data=np.concatenate(prob))
 
         swapfile = os.path.realpath('.'.join([damid_actdist_file, ] + additional_data))
+        logger.info(swapfile)
 
         if last_damidactdist_file is not None:
              shutil.move(last_damidactdist_file, swapfile)           # rename "last_damidactdist_file" as "swapfile"
+       
         shutil.move(tmp_damid_actdist_file, damid_actdist_file)
 
         # ... update runtime parameter for next iteration/sigma value
@@ -377,9 +326,9 @@ def cleanProbability(pij, pexist):
 
 
 
-def get_damid_actdist_I(I, p_exp, plast, hss, it_corr, contact_range=0.05, shape="sphere", nucleus_param=5000.0):
+def get_damid_actdist(I, p_exp, plast, hss, it_corr, contact_range=0.05, shape="sphere", nucleus_param=5000.0):
     """
-    Serial function to compute the damid activation distance for a locus: employed with spheres or ellipsoids
+    Serial function to compute the damid activation distance for a locus.
 
     Parameters
     ----------
@@ -422,152 +371,46 @@ def get_damid_actdist_I(I, p_exp, plast, hss, it_corr, contact_range=0.05, shape
     ii = copy_index[I]
     n_copies = len(ii)
 
-    r = hss.get_radii()[ii[0]]
+    r = hss.get_radii()[ ii[0] ]
 
-    ### DAMID PROTOCOL IF SHAPE IS GEOMETRIC ###
+    d_sq = np.empty(n_copies*n_struct)
 
-    if (shape == 'sphere') or (shape == 'ellipsoid'):
+    # compute distribution of distances d(i, LAMINA) and d(i', LAMINA)
+    for i in range(n_copies):
+        x = hss.get_bead_crd(ii[ i ])
+        R = np.array(nucleus_param)*(1 - contact_range)
+        d_sq[ i*n_struct:(i+1)*n_struct ] = snormsq[shape](x, R, r)
 
-        # initialize matrix of distances
-        d_sq = np.empty(n_copies*n_struct)
+    # this defines the contact with the lamina, se SI
+    rcutsq = 1.0
+    
+    # sort ditances to lamina in decreasing order, from farthest to closest
+    d_sq[::-1].sort()
 
-        print('Get activation distance for DamID for sphere or ellipsoid')
+    contact_count = np.count_nonzero(d_sq >= rcutsq)
+    
+    # compute probability of contact with lamina in current population for locus i
+    pnow = float(contact_count) / (n_struct * n_copies)
 
-        # compute distribution of distances d(i, LAMINA) and d(i', LAMINA)
-        for i in range(n_copies):
+    # iterative refinement: if applicable, correct p_exp using information from p_last (last Assignment) and p_now (last Modeling)
+    if it_corr == 1:
 
-            x = hss.get_bead_crd(ii[i])
-            R = np.array(nucleus_param)*(1 - contact_range)
-        
-            d_sq[ i*n_struct:(i+1)*n_struct ] = snormsq[shape](x, R, r)
+         t = cleanProbability(pnow, plast)
+         p = cleanProbability(p_exp, t)
+    else:
+         p = p_exp
+         
 
-        # this defines the contact with the lamina, se SI
-        rcutsq = 1.0
+    # set a super large actdist for the case p = 0
+    activation_distance = 2
 
-        # sort ditances to lamina in decreasing order, from farthest to closest
-        d_sq[::-1].sort()
-
-        # iterative refinement: if applicable, correct p_exp using information from p_last (last Assignment) and p_now (last Modeling)
-        if it_corr == 1:
-
-            contact_count = np.count_nonzero(d_sq >= rcutsq)
-
-            # compute probability of contact with lamina in current population for locus i
-            pnow = float(contact_count) / (n_struct * n_copies)
-
-            t = cleanProbability(pnow, plast)
-            p = cleanProbability(p_exp, t)
-        else:
-            p = p_exp
-
-
-        # set a super large actdist for the case p = 0
-        activation_distance = 2
-
-        if p>0:
-            # determine index pointing to p-th quantile, which defines the activation distance
-            o = min(n_copies * n_struct - 1,
+    if p>0:
+        # determine index pointing to p-th quantile, which defines the activation distance
+        o = min(n_copies * n_struct - 1,
                 int( round(n_copies * n_struct * p ) ) )
 
-            # identify the DamID activation distance**2 as the o-th quantile, then take the sqrt
-            activation_distance = np.sqrt(d_sq[o])
+        # identify the DamID activation distance**2 as the o-th quantile, then take the sqrt
+        activation_distance = np.sqrt(d_sq[o])
 
-        return [ (i, activation_distance, p) for i in ii ]
+    return [ (i, activation_distance, p) for i in ii ]
 
-
-
-def get_damid_actdist_exp(params, hss, n_struct, copy_index, it_corr, contact_range=0.05, volumes_idx = [0], volume_prefix = 'prefisso'):
-    """
-    Serial function to compute the damid activation distance for a batch of loci, when different volume maps are assigned.
-
-    Parameters
-    ----------
-        params: list of [I, p_exp, plast]. Because loading volume maps is expensive, we process the whole batch here
-        hss : alabtools.analysis.HssFile
-            file containing coordinates
-        contact_range : float
-            built-in tolerance used to define a contact with the lamina (see Boninsegna et al, 2022, SI)
-        it_corr: boolean
-            (1) Use iterative refinement and correct p_exp, based on p_now (see later) and p_last
-            (0) No iterative refinement 
-        volumes_idx:
-        volumes_prefix:
-
-    Returns
-    -------
-        list of (i, actdist_i, p_i) arrays
-
-        i (int): the (possibily diploid) locus index
-        actdist_i (float): the activation distance
-        p_i (float): the (possibly) corrected (upon iterative refinement) probability
-
-        If I = (i,i'), then we'll have [[i, actdist_I, p_I],[i', actdist_I, p_I]]
-
-    """
-
-    # initialize output
-    results = []
-
-    d_sq = [[] for m in range(len(params))]
-    
-    for volume_idx in list(set(volumes_idx)):    # use indexes to loop over the different volume maps and then add a suffix
-
-        # identify those structures that are optimized within the exp_map specified by "volume_idx"
-        where_vol = np.where(np.array(volumes_idx) == volume_idx)[0]
-        
-        # name of that volume map
-        volume = volume_prefix + str(volume_idx) + '.txt'
-
-        # load volume file/volume map/volume grid
-        vol = VolumeFile(volume)
-        vol.load_file()
-
-        logger.info(volume)
-
-        # this is a batch of all Is that need to be restrained
-        for k, (I, p_exp, plast) in enumerate(params):
-            
-            ii = copy_index[I]
-            n_copies = len(ii)
-            
-            for i in range(n_copies):    # "i" is a struct_ind
-                x = hss.get_bead_crd(ii[i])[where_vol]   # extract coordinates of locus ii[i] from those structures listed in "where_vol"
-                                                        # "x" now has coordinates (len(where_vol), 3)
-
-                d_sq[k] = d_sq[k] + snormsq['exp_map'](x, vol)   # append lists for the n_copies of I for a subset of structres, then move to the next...
-            
-
-    d_sq = np.array(d_sq)     # we are working with actual distances, not the squared distances
-    d_sq.sort(axis = 1)
-    
-    for k, (I, p_exp, plast) in enumerate(params):
-
-            # iterative refinement: if applicable, correct p_exp using information from p_last (last Assignment) and p_now (last Modeling)
-            if it_corr == 1:
-
-                contact_count = np.count_nonzero(d_sq[k] >= contact_range)
-
-                # compute probability of contact with lamina in current population for locus i
-                pnow = float(contact_count) / (n_struct * n_copies)
-
-                t = cleanProbability(pnow, plast)
-                p = cleanProbability(p_exp, t)
-            else:
-                p = p_exp
-            
-            activation_distance = 1e-9
-
-            ii = copy_index[I]
-            n_copies = len(ii)
-
-            if p > 0:
-                 # determine index pointing to p-th quantile, which defines the activation distance
-                 o = min(n_copies * n_struct - 1,
-                 int( round(n_copies * n_struct * p ) ) )
-
-                 # identify the DamID activation distance**2 as the o-th quantile, then take the sqrt
-                 activation_distance = np.sqrt(d_sq[k, o])
-    
-            results += [ (i, activation_distance, p) for i in ii ]
-
-    return results

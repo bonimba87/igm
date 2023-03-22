@@ -201,9 +201,6 @@ class ActivationDistanceStep(Step):
         dictHiC = cfg['restraints']['Hi-C']
         hss     = HssFile(cfg.get("optimization/structure_output"), 'r')
 
-        # read in the iterative correction knob
-        it_corr = cfg.get('runtime/Hi-C/iter_corr_knob')
-
         # read params
         fname   = os.path.join(tmp_dir, '%d.in.npy' % batch_id)
         params  = np.load(fname)
@@ -274,7 +271,7 @@ class ActivationDistanceStep(Step):
         if 'opt_iter' in self.cfg['runtime']:
             additional_data.append(
                 'iter_{}'.format(
-                    self.cfg['runtime']['opt_iter'] - 1 #LB the "last_actdist_file" should refer to the previous, not current iteration
+                    self.cfg['runtime']['opt_iter']
                 )
             )
 
@@ -314,15 +311,12 @@ class ActivationDistanceStep(Step):
 def cleanProbability(pij, pexist):
 
     """ Clean probabilities by correcting for the number of restraints applied already.
-        Procedure is detailed in Nan's PhD proposal, section 2, see also Nat Meth 2022, Supplementary Information 
+        Procedure is detailed in Nan's PhD proposal, section 2 
 
         pij : float
-           actual contact probability between i-j as from structures in the current population (from previous M-step)
+           actual probability from population
         pexist: float
-           target probability to be enforced (as from previous A-step)
-
-        Output: float
-           corrected probability
+           supposed probability as from previous Assignment step
     """
 
     if pexist < 1:
@@ -336,7 +330,7 @@ def cleanProbability(pij, pexist):
 def get_actdist(i, j, pwish, plast, hss, it_corr, contactRange=2, option=0):
 
     '''
-    Serial function to compute the activation distance for a pair of loci (see Nat Meth 2022).
+    Serial function to compute the activation distance for a pair of loci .
 
     Parameters
     ----------
@@ -345,29 +339,25 @@ def get_actdist(i, j, pwish, plast, hss, it_corr, contactRange=2, option=0):
         pwish : float
             target contact probability (from hcs input file)
         plast : float
-            the iteratively refined i-j probability (from previous A-Step iteration)
+            the last refined probability (from previous iteration)
         hss : alabtools.analysis.HssFile
-            file containing coordinates of the structures
+            file containing coordinates
         it_corr: int, boolean
-            (1) we correct pwish using the iterative refinement
-            (0) no iterative refinement
+            if 1, then we correct pwish using the iterative refinement
         contactRange : int
-            contact range of sum of radius of beads (from .json file)
+            contact range of sum of radius of beads
         option : int
-            calculation option for enumerating CIS (intra chrom) contacts:
-            (0) only (i,j) and (i', j') are allowed
-            (1) all options (i,j), (i', j), (i,j') and (i',j') are allowed [this option is currently not coded]
+            calculation option:
+            (0) intra chromosome contacts are considered intra, assigned within the same copy only (i,j) and (i',j')
+            (1) intra chromosome contacts are assigned intra/inter equally [all four pairs (i,j), (i',j),(i,j'), (i',j')]
     Returns
     -------
-	List res of [i, j, ad_ij, p_ij] arrays
+	List res of [i, j, ad, p] arrays
 
         i (int): index of first locus
         j (int): index of second locus
-        ad_ij (float): the activation distance
-        p_ij (float): the (possibly) corrected (upon iterative correction) probability
-
-        if chrom[i] != chrom[j],  res = [[i,j,ad_ij,p_ij], [i,j',ad_ij,p_ij], [i',j,ad_ij,p_ij], [i',j',ad_ij,p_ij]],
-        if chrom[i] == chrom[j],  res = [[i,j,ad_ij,p_ij],[i',j',ad_ij,pij]]
+        ad (float): the activation distance
+        p (float): the corrected (upon iterative correction) probability
 
     LB: here we implement the Assignment as from the PNAS paper, overcome Guido's approximations
     '''
@@ -410,7 +400,7 @@ def get_actdist(i, j, pwish, plast, hss, it_corr, contactRange=2, option=0):
 
         it = 0
    
-        for k, m in zip(ii, jj):    # loop over (i,j) and (i',j') 
+        for k, m in zip(ii, jj):    # loop over the (i,j) and (i',j') 
 
             x = hss.get_bead_crd(k)
             y = hss.get_bead_crd(m)
@@ -468,18 +458,28 @@ def get_actdist(i, j, pwish, plast, hss, it_corr, contactRange=2, option=0):
         # identify the index pointing to what it is understood as activation distance
         o = min(n_possible_contacts * n_struct - 1,
                 int(round(n_possible_contacts * p * n_struct)))
-
         # identify the activation distance as the o-th quantile, the take the sqrt
         activation_distance = np.sqrt(sortdist_sq[o])
 
-        # if locii from same chromosome and option == 0
+        # if locii from same chromosome, there is a flag...if flag == 0, then
+        # contacts between different copies are discarded (WHY?)
         if (chrom[i] == chrom[j]) and (option == 0):
-
             res = [(i0, i1, activation_distance, p) for i0, i1 in zip(ii, jj)]
-
-        # if locii from different chromosomes OR (from same chromosome and option == 1)
         else:
      
+            #logger.info(activation_distance, p)
+        #    # if locii on different chromosomes, then we have 4 pairs of distances
             res = [(i0, i1, activation_distance, p) for i0 in ii for i1 in jj]
 
+    # return a list (n_pairs, 4), n_pairs = number of independent pairs
     return res
+
+
+# this seems to be DEPRECATED, not used
+def newton_prob(p_wish, x_now, x_last, p_now, p_last):
+    # value of the functions
+    f_now = p_now - p_wish
+    f_last = p_last - p_wish
+    derivative = (f_now - f_last) / (x_now - x_last)
+    x_new = x_now - f_now / derivative
+    return x_new

@@ -6,8 +6,10 @@ from .steric      import Steric
 from .hic         import HiC
 from .sprite      import Sprite
 from .damid       import Damid
-from .nucleolus   import Nucleolus
 from .genenvelope import GenEnvelope
 from .fish        import Fish
 from .inter_hic   import interHiC
 from .intra_hic   import intraHiC
+from .imaging     import Imaging
+from .centromere  import Centromere
+from .gendamid    import GenDamid

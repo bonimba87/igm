@@ -20,15 +20,6 @@ class BondType(object):
     def __eq__(self, other):
         return hash(self) == hash(other)
 
-    def get_violation(self):
-        raise NotImplementedError('This is an abstract base class')
-
-    def get_relative_violation(self):
-        raise NotImplementedError('This is an abstract base class')
-
-    def get_energy(self):
-        raise NotImplementedError('This is an abstract base class')
-
 
 class HarmonicUpperBound(BondType):
     '''
@@ -221,7 +212,7 @@ class Atom(object):
 
     def __str__(self):
         return '{} {} {} {} {} {}'.format(self.id + 1,
-                                          self.mol_id + 1,
+                                          self.mol_id,
                                           self.atom_type.id + 1,
                                           self.xyz[0],
                                           self.xyz[1],
@@ -260,17 +251,24 @@ class LammpsModel(object):
             # if NORMAL, add a regular DNA bead
             if p.ptype == Particle.NORMAL:
                 att = DNABead(p.r)
-                if hasattr(p, 'chainID'):
-                    mol_id = p.chainID + 1
+                if hasattr(p, 'chain_ID'):
+                    mol_id = p.chain_ID + 1
                 else:
                     mol_id = 0
                 atom = self.add_atom(att, p.pos, mol_id=mol_id)
 
             # if DUMMY particles, define properties and add them
             elif p.ptype == Particle.DUMMY_STATIC:
+                #atom = self.add_atom(FrozenPhantomBead(), p.pos)
                 atom = self.get_next_dummy(p.pos)
+
+                #LB
+                #print('dummy statics = ' + str(atom))
             elif p.ptype == Particle.DUMMY_DYNAMIC:
                 atom = self.add_atom(centroid_type, p.pos)
+                #LB
+                #print('dummy dynamics = ' + str(atom))
+
             else:
                 raise ValueError('Unknown particle type')
             self.imap.append(atom.id)
@@ -287,11 +285,13 @@ class LammpsModel(object):
 
                 # dummies creation depend on the number of bonds, so we may need to
                 # create new atoms if we add bonds
-                if pi.atom_type == Atom.FIXED_DUMMY:
-                    pi = self.get_next_dummy()
-                if pj.atom_type == Atom.FIXED_DUMMY:
-                    pj = self.get_next_dummy()
-
+                #if pi.atom_type == Atom.FIXED_DUMMY:
+                #    print(pi.id, pi.xyz)
+                #    pi = self.get_next_dummy(pos = pi.xyz)
+                #    print(pi.id, pi.xyz)
+                #if pj.atom_type == Atom.FIXED_DUMMY:
+                #    pj = self.get_next_dummy(pos = pj.xyz)
+                #    print(pj.id)
 
                 if f.ftype == f.HARMONIC_UPPER_BOUND:
                     bond_type = HarmonicUpperBound(r0=f.d, k=f.k)

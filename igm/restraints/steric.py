@@ -24,7 +24,7 @@ class Steric(Restraint):
         
         plist = [i for i, p in enumerate(model.particles) if p.ptype == Particle.NORMAL]
         
-        f = model.addForce(ExcludedVolume(plist, self.k))
+        f = model.addForce(ExcludedVolume(plist, self.k, note = Restraint.STERIC))
         
         self.forceID.append(f)
         #-

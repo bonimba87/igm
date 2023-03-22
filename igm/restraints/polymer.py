@@ -36,7 +36,7 @@ class Polymer(Restraint):
             if (self.index.chrom[i] == self.index.chrom[i+1] and
                 self.index.copy[i] == self.index.copy[i+1]):
 
-                # do we have contact probabiities?
+                # do we have contact probabiities for nearest neighbors?
                 if self.cp is None:
                     dij = self.contactRange*(model.particles[i].r +
                                              model.particles[i+1].r)

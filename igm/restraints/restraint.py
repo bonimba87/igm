@@ -10,7 +10,7 @@ class Restraint(object):
 
     """
 
-    OTHER = -1
+    STERIC = -1
     CONSECUTIVE = 0
     HIC = 1
     INTRA_HIC = 9
@@ -22,6 +22,11 @@ class Restraint(object):
     ENVELOPE = 6
     EXCLUDED_VOLUME = 7
     NUCL_EXCLUDED_VOLUME = 8
+    IMAGING = 11
+    CENTROMERE = 12
+    NUCLDAMID = 13
+    
+
 
     def __init__(self, data, args):
         self.forceID = []

@@ -6,6 +6,7 @@ import h5py
 from .restraint import Restraint
 from ..model.forces import HarmonicLowerBound, EllipticEnvelope    # restraint forces associated with damid
 from ..model import Particle
+from ..utils.log import logger
 
 try:
     UNICODE_EXISTS = bool(type(unicode))
@@ -99,7 +100,8 @@ class Damid(Restraint):
         self.forceID = []
         self._load_actdist(damid_file)
     #-
-
+        logger.info(contact_range)
+        logger.info('contact range')
 
     def _load_actdist(self,damid_actdist):
 
@@ -130,7 +132,7 @@ class Damid(Restraint):
                 np.array([self.a, self.b, self.c])*cutoff,
                 -self.k,
                 scale=cutoff*np.mean([self.a, self.b, self.c])
-            )
+            ), note=Restraint.DAMID
         )
 
         self.forceID.append(f)

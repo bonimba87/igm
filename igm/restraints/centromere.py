@@ -8,10 +8,11 @@ from ..utils.log import logger
 
 import h5py
 
-class intraHiC(Restraint):
+class Centromere(Restraint):
 
     """
-    Object handles Hi-C restraint
+    Object handles neighbor HiC  restraints of the kind (i,i+2), (i,i+3).
+    THese are introduced in the HiC matrix to prevent unsequenced regions (aka centromeres) from flying apart during simulation. But might overcomplicate optimization, if they are factored in in computing the residuals.
     
     Parameters
     ----------
@@ -38,13 +39,13 @@ class intraHiC(Restraint):
     
     def _apply(self, model):
 
-        """ Apply harmonic restraint to those distances smaller than d_{act}, exclude contacts that are artificial """ 
+        """ Apply harmonic restraint to those distances smaller than d_{act}, only when II-J) are artificially restrained for the purposes of centromere""" 
        
         for (i, j, d) in self.actdist:
-            
+
             # calculate particle distances for i, j
-            # if ||i-j|| <= d then assign a bond for i, j
-            if ((model.particles[i] - model.particles[j] <= d) and (self.chrom[i] == self.chrom[j])): # and (np.abs(i-j)>6)): 
+            # if ||i-j|| <= d then assign a bond for i, j, if those interactions are artificial and introduced to guarantee chain integrity for centromeres
+            if ((model.particles[i] - model.particles[j] <= d) and (np.abs(i - j) <= 6) and (np.abs(i - j) > 1)): 
 
                 # harmonic mean distance
                 dij = self.contactRange*(model.particles[i].r + 
@@ -52,7 +53,7 @@ class intraHiC(Restraint):
                 
                 # add harmonic bond between i-th and j-th beads
                 f = model.addForce(HarmonicUpperBound((i, j), dij, self.k, 
-                                                      note=Restraint.INTRA_HIC))
+                                                      note=Restraint.CENTROMERE))
                 self.forceID.append(f)
             #-
         #-

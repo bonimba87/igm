@@ -4,28 +4,11 @@ import os, os.path
 
 from math import acos, sin, cos, pi
 
-from ..core import Step
+from ..core import StructGenStep
 from ..utils import HmsFile
 from alabtools.analysis import HssFile
 
-from shutil import copyfile
-from tqdm import tqdm
-
-from ..core.job_tracking import StepDB
-from ..utils.log import print_progress, logger
-from ..utils.files import make_absolute_path
-from hashlib import md5
-
-class RandomInit(Step):
-
-    def __init__(self, cfg):
-        super(RandomInit, self).__init__(cfg)
-
-        self.argument_list = list(range(self.cfg["model"]["population_size"]))
-
-        self.tmp_extensions.append(".hms")
-        self.keep_temporary_files = cfg["optimization"]["keep_temporary_files"]
-        self.keep_intermediate_structures = cfg["optimization"]["keep_intermediate_structures"]
+class RandomInit(StructGenStep):
 
     def setup(self):
         self.tmp_file_prefix = "random"
@@ -45,15 +28,10 @@ class RandomInit(Step):
         #np.random.seed( (k*struct_id) % (2**32) )
         
         hssfilename    = cfg["optimization"]["structure_output"]
-
-        logger.info(hssfilename)
-
         nucleus_radius = cfg.get("model/init_radius")
-        logger.info(nucleus_radius)
-        
+
         with HssFile(hssfilename,'r') as hss:
             index = hss.index
-            logger.info(hss.radii)
 
         crd = generate_territories(index, nucleus_radius)
 
@@ -67,68 +45,6 @@ class RandomInit(Step):
             'randomInit'
         ])
     #-
-    def reduce(self):
-        """
-        Collect all hms structure coordinates together to assemble a hssFile
-        """
-
-        hssfilename = self.cfg["optimization"]["structure_output"] + '.T'
-        logger.info(hssfilename)
-
-        # bonimba: using changes as Nan
-        with HssFile(hssfilename, 'r+') as hss:
-
-            n_struct = hss.nstruct
-            n_beads = hss.nbead
-
-            #iterate all structure files and
-            total_restraints = 0.0
-            total_violations = 0.0
-
-            # extract coordinates and put them in matrix
-            master = hss.coordinates
-            logger.info('Collecting all the coordinates from all configurations....')
-
-            for i in tqdm(range(n_struct), desc='(REDUCE)'):
-                # extract info from each single .hms file
-                fname = "{}_{}.hms".format(self.tmp_file_prefix, i)
-
-                hms = HmsFile( os.path.join( self.tmp_dir, fname ) )
-                crd = hms.get_coordinates()
-                total_restraints += hms.get_total_restraints()
-                total_violations += hms.get_total_violations()
-
-                # replace coordinates in master matrix with coordinates from hms file
-                master[:,i,:] = crd
-
-            # master was updated, now use those to define the coordinates in the hss file
-            hss.set_coordinates(master)
-            #-
-            if (total_violations == 0) and (total_restraints == 0):
-                hss.set_violation(np.nan)
-            else:
-                hss.set_violation(total_violations / total_restraints)
-
-        hss.close()
-
-        # repack 
-        PACK_SIZE = 1e6
-        pack_beads = max(1, int( PACK_SIZE / n_struct / 3 ) )
-        pack_beads = min(pack_beads, n_beads)
-
-        logger.info('repacking...')
-        cmd = 'h5repack -l coordinates:CHUNK={:d}x{:d}x3 {:s} {:s}'.format(
-            pack_beads, n_struct, hssfilename, hssfilename + '.swap'
-        )
-        os.system(cmd)
-        logger.info('done.')
-        os.rename(hssfilename + '.swap', self.cfg.get("optimization/structure_output"))
-
-        if self.keep_intermediate_structures:
-            copyfile(
-                self.cfg["optimization"]["structure_output"],
-                self.intermediate_name()
-            )
 
 
 def uniform_sphere(R):

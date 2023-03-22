@@ -132,3 +132,49 @@ def h5_create_or_replace_dataset(root, dataname, data, **kwargs):
     else:
         root.create_dataset(dataname, data=data, **kwargs)
     return root[dataname]
+
+class VolumeFile(object):
+
+    def __init__(self, filename, *args, **kwargs):
+          self.filename = filename
+
+    def load_file(self):
+          
+        f = open(self.filename, "r")
+
+        # read in nucleus/nuclear body switch
+        self.body_idx = [int(x) for x in next(f).split()][0]
+
+        # compute number of voxels per size
+        nvoxel = np.array([int(x) for x in next(f).split()])
+
+        # "geometric center of the grid"
+        self.center = np.array([float(x) for x in next(f).split()])
+
+        # float information about grid features (origin and grid)
+        self.origin = np.array([float(x) for x in next(f).split()])
+        self.grid   = np.array([float(x) for x in next(f).split()])
+
+        # initialize empty matrices    
+        self.matrice    = np.zeros((nvoxel[0], nvoxel[1], nvoxel[2],3)).astype('int')
+        self.int_matrix = np.zeros((nvoxel[0], nvoxel[1], nvoxel[2])).astype('int')
+
+        for i in range(nvoxel[0] * nvoxel[1] * nvoxel[2]):
+
+                     # read septuplet, (i,j,k) and (EDT[i], EDT[j], EDT[k]), interior/exterior label
+                     a, b, c, edt_a, edt_b, edt_c, in_out = [int(x) for x in next(f).split()]
+
+                     # cast that into EDT matrix
+                     self.matrice[a,b,c] = np.array([edt_a, edt_b, edt_c])
+
+                     # store interior/exterior label
+                     self.int_matrix[a,b,c] = in_out
+
+        # at the end of loop , check if number of remaining lines is consistent with number of map voxels
+        if (i != (nvoxel[0] * nvoxel[1] * nvoxel[2] - 1)):
+                     print(nvoxel[0] * nvoxel[1] * nvoxel[2])
+                     print("ACHTUNG!")
+                     stop
+    
+        self.nvoxel = nvoxel
+

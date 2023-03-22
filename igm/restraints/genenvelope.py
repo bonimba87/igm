@@ -11,6 +11,7 @@ try:
 except NameError:
     unicode = lambda s: str(s)
 
+
 class GenEnvelope(Restraint):
     """
     This class handles a (non ideal) nuclear envelope restraint from a density map
@@ -19,16 +20,17 @@ class GenEnvelope(Restraint):
     ----------
     volume_file: string
         name of file containing the binary density map we would like to fit the genome into
-    k : float
-        spring constant
+    k : positive float
+        factor that modulates the force intensity.
+        (We retained "k" Out of analogy with the original formulation involving ellipsoidal; but really this is just a 
+         multiplicative factor and does not have any spring constant interpretation with experimental maps)
     """
 
-    def __init__(self, shape, volume_file="", k=1.0):
+    def __init__(self, shape, volume_file, k=1.0):
 
         self.shape = unicode(shape)
         self.volume_file = volume_file     # file containing the binary density map information
         self.k = k                         # elastic restraining constant (>0 attractive, <0 repulsive)
-
         self.forceID = []
 
 
@@ -44,11 +46,8 @@ class GenEnvelope(Restraint):
                 normal_particles,
                 self.volume_file,
                 self.k,
-                scale= 0.5
-                # set arbitrary scale: 100% violation ratio if extend inside by
-                # 1/10 of the nucleus radius. With usual parameters, it means
-                # that will be noticed as violated when the bond is stretched
-                # by 25nm.
+                contact_range = 0.95,
+                note = Restraint.ENVELOPE
             )
         )
         self.forceID.append(f)
@@ -59,5 +58,5 @@ class GenEnvelope(Restraint):
 
 
     def __repr__(self):
-        return 'ExpEnvelope[shape={},k={}]'.format(self.shape, self.k)
+        return 'ExpEnvelope[shape={},map={},k={}]'.format(self.shape, self.volume_file, self.k)
     #=

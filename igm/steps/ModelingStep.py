@@ -12,9 +12,10 @@ import traceback
 
 from alabtools.analysis import HssFile
 
-from ..core import StructGenStep
+from ..core import Step
 from ..model import Model, Particle
-from ..restraints import Polymer, Envelope, Steric, intraHiC, interHiC, Sprite, Damid, Nucleolus, GenEnvelope, Fish
+from ..restraints import Polymer, Envelope, Steric, intraHiC, interHiC, Centromere, Sprite, Damid, GenEnvelope, Fish, Imaging
+from ..restraints import GenDamid
 from ..utils import HmsFile
 from ..utils.files import h5_create_group_if_not_exist, h5_create_or_replace_dataset, make_absolute_path
 from ..parallel.async_file_operations import FilePoller
@@ -27,7 +28,13 @@ DEFAULT_HIST_BINS = 100
 DEFAULT_HIST_MAX = 0.1
 
 
-class ModelingStep(StructGenStep):
+class ModelingStep(Step):
+
+    def __init__(self, cfg):
+        super(ModelingStep, self).__init__(cfg)
+
+        self.keep_temporary_files = cfg["optimization"]["keep_temporary_files"]
+        self.keep_intermediate_structures = cfg["optimization"]["keep_intermediate_structures"] 
 
     def name(self):
 
@@ -68,6 +75,11 @@ class ModelingStep(StructGenStep):
                     self.cfg['runtime']['FISH']['tol']
                 )
             )
+
+        if "imaging" in self.cfg['restraints']:
+            additional_data .append(
+                'imaging={:.1f}'.format(self.cfg['runtime']['imaging']['tol'])
+                )
 
         if 'opt_iter' in self.cfg['runtime']:
             additional_data.append(
@@ -162,7 +174,9 @@ class ModelingStep(StructGenStep):
             if os.path.isfile(readyfile):
                 return
 
-        hssfilename = cfg["optimization"]["structure_output"]
+        #hssfilename = cfg["optimization"]["structure_output"]
+        hssfilename = './igm-model.hss.relaxInit.hss'
+        logger.info(hssfilename)
 
         # read index, radii, coordinates
         with HssFile(hssfilename, 'r') as hss:
@@ -194,6 +208,16 @@ class ModelingStep(StructGenStep):
         ex = Steric(cfg.get("model/restraints/excluded/evfactor"))
         model.addRestraint(ex)
 
+        # add consecutive bead polymer restraint to ensure chain connectivity
+        if cfg.get('model/restraints/polymer/polymer_bonds_style') != 'none':
+            contact_probabilities = cfg['runtime'].get('consecutive_contact_probabilities', None)
+            pp = Polymer(index,
+                         cfg['model']['restraints']['polymer']['contact_range'],
+                         cfg['model']['restraints']['polymer']['polymer_kspring'],
+                         contact_probabilities=contact_probabilities)
+            model.addRestraint(pp)
+            monitored_restraints.append(pp)
+
         # add nucleus envelope restraint
         shape = cfg.get('model/restraints/envelope/nucleus_shape')
         envelope_k = cfg.get('model/restraints/envelope/nucleus_kspring')
@@ -207,36 +231,110 @@ class ModelingStep(StructGenStep):
             semiaxes = cfg.get('model/restraints/envelope/nucleus_semiaxes')
             ev = Envelope(shape, semiaxes, envelope_k)
         elif cfg['model']['restraints']['envelope']['nucleus_shape'] == 'exp_map':
-            
-            env_idx = struct_id % 4
 
-            volume_file  = cfg['model']['restraints']['envelope']['input_map'][env_idx]
-            ev = GenEnvelope(shape, volume_file, envelope_k)
+            volume_prefix = cfg.get('model/restraints/envelope/volume_prefix')
+            volumes_idx   = cfg.get('model/restraints/envelope/volumes_idx')
+
+            if len(volumes_idx) > 1:
+                   volume_file = volume_prefix + str(volumes_idx[struct_id]) + '.txt'
+            else:
+                   volume_file = volume_prefix + str(volumes_idx[0]) + '.txt'
+
+            ev = GenEnvelope(shape = cfg['model']['restraints']['envelope']['nucleus_shape'],
+                             volume_file = volume_file,
+                             k = cfg['model']['restraints']['envelope']['nucleus_kspring'])
 
         model.addRestraint(ev)
         monitored_restraints.append(ev)
 
-        # add consecutive bead polymer restraint to ensure chain connectivity
-        if cfg.get('model/restraints/polymer/polymer_bonds_style') != 'none':
-            contact_probabilities = cfg['runtime'].get('consecutive_contact_probabilities', None)
-            pp = Polymer(index,
-                         cfg['model']['restraints']['polymer']['contact_range'],
-                         cfg['model']['restraints']['polymer']['polymer_kspring'],
-                         contact_probabilities=contact_probabilities)
-            model.addRestraint(pp)
-            monitored_restraints.append(pp)
 
-        # LB: add nuclear body excluded volume restraints
-        if "nucleolus" in cfg['restraints']:
+        # LB imaging data
+        if "imaging" in cfg['restraints']:
 
-            # read in nucle lus coordinates and radius from cfg file
+            kspring = cfg['restraints']['imaging']['kspring']
+            #rad_tol = cfg['restraints']['imaging']['rad_tol'] # nm, this is the number one loops over in igm_run
+            
+            imaging_assignment_file = cfg['restraints']['imaging']['assignment_file']
+          
+            rad_tol = cfg['runtime']['imaging']['tol']   # in nm, this is to loop over
 
-            for mappa  in cfg['restraints']['nucleolus']['input_map']:
+            print('tolerance = ' + str(rad_tol))
+            print('struct_id = ' + str(struct_id))
+            print('spring k   = ' + str(kspring))
+ 
+            # add "Imaging" class restraints
+            imag = Imaging(
+                imaging_assignment_file,
+                radial_tolerance = rad_tol,
+                struct_id = struct_id,
+                k = kspring
+            )
 
-                    nucl = GenEnvelope(cfg['restraints']['nucleolus']['shape'], mappa,
-                                       cfg['restraints']['nucleolus']['k_spring'])
-                    model.addRestraint(nucl)
-                    monitored_restraints.append(nucl)
+            model.addRestraint(imag)
+            monitored_restraints.append(imag)
+            #print(model.particles[-1], len(model.particles))
+ 
+       # LB: add nuclear body excluded volume restraints
+        if "nucleolus" in cfg['model']['restraints']:
+
+            nucleolus_prefix = cfg.get('model/restraints/nucleolus/volume_prefix')
+            nucleolus_idx   = cfg.get('model/restraints/nucleolus/volumes_idx')
+
+            if len(nucleolus_idx) > 1:
+                   nucleolus_file = nucleolus_prefix + str(nucleolus_idx[struct_id]) + '.txt'
+            else:
+                   nucleolus_file = nucleolus_prefix + str(nucleolus_idx[0]) + '.txt'
+
+            nucl = GenEnvelope(shape = cfg['model']['restraints']['nucleolus']['nucleus_shape'],
+                             volume_file = nucleolus_file,
+                             k = cfg['model']['restraints']['nucleolus']['nucleus_kspring'])   # negative k for repelling effect
+
+            model.addRestraint(nucl)
+            monitored_restraints.append(nucl)
+
+        # add DAMID restraint
+        if "nuclDamID" in cfg['restraints']:
+
+            # read parameters from cfg file
+            #actdist_file  = './AICS_fictional_damid_assign_large.h5' #cfg.get('runtime/DamID/damid_actdist_file')
+
+            shape = cfg['model']['restraints']['envelope']['nucleus_shape']
+            actdist_file  =  '/u/home/b/bonimba/test_IGM/Damid_assign/tmp/damid/damid_actdist.hdf5'  #cfg.get('runtime/DamID/damid_actdist_file')
+            logger.info(actdist_file)
+
+            k = cfg.get('restraints/nuclDamID/contact_kspring', 0.05)
+
+            if shape == 'sphere' or shape == 'ellipsoid':
+
+                 contact_range = cfg.get('restraints/nuclDamID/contact_range', 2.0)
+
+                 # effectively add DAMID restraints
+                 damid         = Damid(damid_file=actdist_file, contact_range=contact_range,
+                          nuclear_radius=radius, k=k,
+                          shape=shape, semiaxes=semiaxes)
+
+            else:
+
+                 contact_range = cfg.get('restraints/nuclDamID/contact_range', 2.0)
+                 
+                 volume_prefix = cfg.get('model/restraints/nucleolus/volume_prefix')
+                 volumes_idx   = cfg.get('model/restraints/nucleolus/volumes_idx')
+
+                 if len(volumes_idx) > 1:
+                      volume_file = volume_prefix + str(volumes_idx[struct_id]) + '.txt'
+                 else:
+                      volume_file = volume_prefix + str(volumes_idx[0]) + '.txt'
+
+                 logger.info(contact_range)
+                 logger.info(volume_file)
+
+                 # effectively add damid restraints
+                 nucldamid         = GenDamid(damid_file=actdist_file, contact_range=contact_range, k=k, volume_file = volume_file,
+                          shape=shape)
+
+
+            model.addRestraint(nucldamid)
+            monitored_restraints.append(nucldamid)
 
         # ---- IGM MODELING RESTRAINTS FROM EXPERIMENTAL DATA ---- #
 
@@ -247,6 +345,14 @@ class ModelingStep(StructGenStep):
             actdist_file  = cfg.get('runtime/Hi-C/actdist_file')
             contact_range = cfg.get('restraints/Hi-C/contact_range', 2.0)
             k             = cfg.get('restraints/Hi-C/contact_kspring', 0.05)
+
+            logger.info(contact_range)
+
+            # centromere: fictional/artificial contacts to prevent centromere bundles to fly apart
+            #centr              = Centromere(actdist_file, chrom, contact_range, k)
+            #model.addRestraint(centr)       # we are not adding this to the "monitored_restraints" list, because we don't want to include
+                                            # them in the computation of residuals/fraction of violations. We want them to be enforced, but not count toward the 
+                                            # number of violations
 
             # effectively add inter  HiC restraints (bonds)
             interhic           = interHiC(actdist_file, chrom, contact_range, k)   # LB, add chrom option
@@ -262,16 +368,55 @@ class ModelingStep(StructGenStep):
         if "DamID" in cfg['restraints']:
 
             # read parameters from cfg file
-            actdist_file  = cfg.get('runtime/DamID/damid_actdist_file')
-            contact_range = cfg.get('restraints/DamID/contact_range', 2.0)
-            k             = cfg.get('restraints/DamID/contact_kspring', 0.05)
+            #actdist_file  = './AICS_fictional_damid_assign_large.h5' #cfg.get('runtime/DamID/damid_actdist_file')
+            actdist_file  =  '/u/home/b/bonimba/test_IGM/Damid_assign/tmp/damid/damid_actdist.hdf5'  #cfg.get('runtime/DamID/damid_actdist_file')
+            logger.info(actdist_file)
+         
+            k = cfg.get('restraints/DamID/contact_kspring', 0.05)
 
-            # effectively add DAMID restraints
-            damid         = Damid(damid_file=actdist_file, contact_range=contact_range,
+            if shape == 'sphere' or shape == 'ellipsoid':
+
+                 contact_range = cfg.get('restraints/DamID/contact_range', 2.0)
+
+                 # effectively add DAMID restraints
+                 damid         = Damid(damid_file=actdist_file, contact_range=contact_range,
                           nuclear_radius=radius, k=k,
                           shape=shape, semiaxes=semiaxes)
+            
+            else:
+
+                 contact_range = cfg.get('restraints/DamID/contact_range', 2.0)
+
+                 volume_prefix = cfg.get('model/restraints/envelope/volume_prefix')
+                 volumes_idx   = cfg.get('model/restraints/envelope/volumes_idx')
+
+                 if len(volumes_idx) > 1:
+                      volume_file = volume_prefix + str(volumes_idx[struct_id]) + '.txt'
+                 else:
+                      volume_file = volume_prefix + str(volumes_idx[0]) + '.txt'
+
+                 logger.info(contact_range)
+                 logger.info(volume_file)
+
+                 # effectively add damid restraints
+                 damid         = GenDamid(damid_file=actdist_file, contact_range=contact_range, k=k, volume_file = volume_file,
+                          shape=shape)
+
+
             model.addRestraint(damid)
             monitored_restraints.append(damid)
+
+        logger.info('\n\n')
+
+        logger.info(monitored_restraints[-4])
+        logger.info(monitored_restraints[-3])
+        logger.info(monitored_restraints[-2])
+        logger.info(monitored_restraints[-1])
+
+        logger.info(model.forces[-4])
+        logger.info(model.forces[-3])
+        logger.info(model.forces[-2])
+        logger.info(model.forces[-1])
 
         # add SPRITE restraint
         if "sprite" in cfg['restraints']:
@@ -322,12 +467,14 @@ class ModelingStep(StructGenStep):
 
             model.addRestraint(fish)
             monitored_restraints.append(fish) 
-        
-        # ========Optimization
+       
+        print(len(index), len(model.particles), model.particles[-1])
+ 
+        # ========Optimization using Simulated Annealing and Conjugate Gradient =======
         cfg['runtime']['run_name'] = cfg.get('runtime/step_hash') + '_' + str(struct_id)
         optinfo = model.optimize(cfg)
 
-        # tolerance parameter: if violation score is smaller than tolerance, then restraint is satisfied
+        # tolerance parameter: if single restraint residual is smaller than tolerance, then restraint is satisfied, and no violation
         tol = cfg.get('optimization/violation_tolerance', 0.01)
 
         # save optimized configuration and violation results to .hms file
@@ -338,14 +485,22 @@ class ModelingStep(StructGenStep):
             # create violations statistics and save all of that into the "vstat" dictionary
             vstat = {}
             for r in monitored_restraints:
+
+                logger.info('Violations')
+                logger.info(r)
+
                 vs = []
                 n_imposed = 0
                 for fid in r.forceID:
+
                     f = model.forces[fid]
                     n_imposed += f.rnum
                     if f.rnum > 1:
 			# a list of values is appended to vs = [] at once
                         vs += f.getViolationRatios(model.particles).tolist()
+                        logger.info(f)
+                        logger.info(vs)
+                        logger.info('\n\n')
                     else:
 			# one value is appended at the time to vs = []
                         vs.append(f.getViolationRatio(model.particles))
@@ -532,7 +687,9 @@ class ModelingStep(StructGenStep):
         with HssFile(self.hssfilename, 'r+') as hss:
             n_struct = hss.nstruct
             n_beads = hss.nbead
-            violation_score = log_stats(hss, self.cfg)
+
+            # build histogram(s) of violations
+            violation_score = log_stats(hss, self.cfg)   # this is where the LOG is printed out to .log
             self.cfg['runtime']['violation_score'] = violation_score
             h5_create_or_replace_dataset(hss, 'config_data',
                                          data=json.dumps(self.cfg, default=lambda a: a.tolist()))
@@ -621,6 +778,11 @@ class ModelingStep(StructGenStep):
                     self.cfg['runtime']['FISH']['tol']
                 )
             )
+
+        if "imaging" in self.cfg['restraints']:
+            additional_data .append(
+                'imaging={:.1f}'.format(self.cfg['runtime']['imaging']['tol'])
+                )
 
         if 'opt_iter' in self.cfg['runtime']:
             additional_data.append(
@@ -721,7 +883,7 @@ def log_stats(hss, cfg):
 
     c = bcolors.WARNING if violation_score >= cfg.get('optimization/max_violations') else bcolors.OKGREEN
     logger.info(
-        c + '                    Violation score: %d (%d) / %d =  ' + bcolors.BOLD + '  %f  ' + bcolors.ENDC,
+        c + '                    Fraction of violations: %d (%d) / %d =  ' + bcolors.BOLD + '  %f  ' + bcolors.ENDC,
         total_violations, non_zero_violations,
         total_restraints,
         violation_score

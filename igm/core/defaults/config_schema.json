@@ -122,12 +122,21 @@
                     "depends_on" : "model__restraints__envelope__nucleus_shape=ellipsoid"
                 },
 
-		"input_map" : {
-		    "label" : "Input map",
-		    "dtype": "path", 
-		    "default": "input.txt",
-		    "description": ".txt file containing the imaging volumetric map describing the nuclear envelope"
+		"volumes_idx" : {
+		    "label" : "Volume map labels",
+		    "dtype": "int", 
+		    "default": [0],
+		    "description": "python list of integers, such that volumes_idx[p] points to the experimental volume map to be used in structure p"
 		},
+
+                "volume_prefix" : {
+                    "label" : "Volume prefix",
+                    "dtype" : "path",
+                    "default" : "",
+                    "role" : "optional-input",
+                    "description" : "Prefix such that volume + str(m) + 'txt' is the file containing the m-th experimental volume map"
+                },
+
 
                 "nucleus_kspring" : {
                     "label" : "Nucleus shape restraint force constant",

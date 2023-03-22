@@ -1,6 +1,8 @@
 from __future__ import division, absolute_import, print_function
 import numpy as np
 
+from ..utils import VolumeFile
+
 # Define "Force" class, and then all the force instances
 
 
@@ -14,9 +16,8 @@ class Force(object):
     HARMONIC_LOWER_BOUND = 2
     ENVELOPE = 3
     GENERAL_ENVELOPE = 4
-    NUCL_EXCLUDED_VOLUME = 5
 
-    FTYPES = ["EXCLUDED_VOLUME","HARMONIC_UPPER_BOUND","HARMONIC_LOWER_BOUND", "ENVELOPE", "GENERAL_ENVELOPE", "NUCL_EXCLUDED_VOLUME"]
+    FTYPES = ["EXCLUDED_VOLUME","HARMONIC_UPPER_BOUND","HARMONIC_LOWER_BOUND", "ENVELOPE", "GENERAL_ENVELOPE"]
 
     def __init__(self, ftype, particles, para, note=""):
         self.ftype = ftype
@@ -133,7 +134,7 @@ class HarmonicUpperBound(Force):
 
     def getViolationRatio(self, particles):
 
-        return self.getScore(particles) / (self.k * self.d)
+        return 0 if self.d == 0 else self.getScore(particles) / (self.k * self.d)
 #-
 
 class HarmonicLowerBound(Force):
@@ -180,7 +181,7 @@ class HarmonicLowerBound(Force):
 
     def getViolationRatio(self, particles):
 
-        return self.getScore(particles) / (self.k * self.d)
+        return 0 if self.d == 0 else self.getScore(particles) / (self.k * self.d)
 #-
 
 class EllipticEnvelope(Force):
@@ -219,22 +220,27 @@ class EllipticEnvelope(Force):
     def getScores(self, particles):
 
         scores = np.zeros(len(self.particle_ids))
-        for k, i in enumerate(self.particle_ids):
+
+        for q, i in enumerate(self.particle_ids):
+
             p = particles[i]
             s2 = np.square(self.semiaxes - p.r)
             x = p.pos
             x2 = x**2
+
             k2 = np.sqrt(np.sum(x2 / s2))
 
             # note that those scores are somewhat approximate
             if k2 > 1 and self.k > 0:
-                t = ( 1.0 - 1.0/np.sqrt(k2) )*np.linalg.norm(x)
+                t = ( 1.0 - 1.0/np.sqrt(k2) )*np.linalg.norm(x)/self.scale
+
             elif k2 < 1 and self.k < 0:
-                t = ( 1.0 - 1.0/np.sqrt(k2) )*np.linalg.norm(x)
+                t = ( 1.0 - np.sqrt(k2))
+
             else:
                 t = 0
 
-            scores[k] = max(0, t * self.k)
+            scores[q] = max(0, t)
 
         return scores
 
@@ -244,14 +250,17 @@ class EllipticEnvelope(Force):
         return ave_t/ave_ax
 
     def getViolationRatios(self, particles):
-        return self.getScores(particles) / (self.k * self.scale)
+        return self.getScores(particles)
 
 
 class ExpEnvelope(Force):
 
     """
-    Envelope/Nuclear body restraint from experimental map
-    e = ||x - r||/R_eff - 1 if particle outside of map, 0 otherwise
+    Envelope/Nuclear body restraint from experimental map.
+
+    We use Euclidean Distance Transform (EDT) to find the closest lamina voxel for each voxel.
+    Their distance is used as a single restraint residual.
+
 
     Parameters
     ---------
@@ -260,106 +269,108 @@ class ExpEnvelope(Force):
     volume_file: string
         filename, contains all the information about the imaging map (voxels, grid spacings, occupancy)
     k: float
-        force scaling amplitude
+        elastic constant
     note : str
         additional information
-    scale: float (DEPRECATED)
+    contact_range: float (<1)
+        tolerance, this defines a concentric smaller lamina; anything in the outer shell is assumed to be in contact with lamina (even if no physical contact actually occurs)
+
+    Returns
+    -------
+    scores: array of floats
+        scores[k] gives the single restraint for particle k in the simulation 
     """
 
     ftype = Force.GENERAL_ENVELOPE
 
     def __init__(self, particle_ids,
-                 volume_file,
-                 k=1.0, note="", scale=100.0):
+                 volume_file = "",
+                 k=1.0, contact_range = 1.0, note = ""):
 
         self.shape = 'exp_map'
         self.volume_file = volume_file
         self.particle_ids = particle_ids
         self.k = k
-        self.scale = scale  # pff. This is to actually give a
-                            # "relative  measure" for violation ratios.
+        self.contact_range = contact_range  # pff. This is to actually give a
         self.note = note
         self.rnum = len(particle_ids)
 
+    def __str__(self):
+        return "FORCE: {} {} {}".format(Force.FTYPES[self.ftype],
+                                        self.rnum,
+                                        self.note)
 
+    #  fill in the 'scores' array (len(scores) = n_particles) with the fraction of violations or violations
     def getScores(self, particles):
 
         scores = np.zeros(len(self.particle_ids))
 
         # load file with volumetric information and parameters
-        f = open(self.volume_file)
+        vol = VolumeFile(self.volume_file)
+        vol.load_file()
 
-        # read in nucleus/nuclear body switch
-        body_idx = [int(x) for x in next(f).split()][0]
+        center = vol.center
+        origin = vol.origin
+        grid   = vol.grid
 
-    	# compute number of voxels per size
-        nvoxel = np.array([int(x) for x in next(f).split()])
+        # lamina for nucleus
+        if (vol.body_idx == 0) and (self.k <0):
 
-        # "geometric center of the grid"
-        center = np.array([float(x) for x in next(f).split()])
- 
-        # float information about grid features (origin and grid)
-        origin = np.array([float(x) for x in next(f).split()])
-        grid   = np.array([float(x) for x in next(f).split()])  
-    
-        matrice = np.zeros((nvoxel[0], nvoxel[1], nvoxel[2]))
-    
-        for i in range(nvoxel[0] * nvoxel[1] * nvoxel[2]):
+                center = center * self.contact_range
+                origin = origin * self.contact_range
+                grid   = grid   * self.contact_range
 
-            # read quadruplet, (i,j,k) and the binary value entry
-            a, b, c, q = [int(x) for x in next(f).split()]
-        
-            # cast that into matrix
-            matrice[a,b,c] = q
-       
-        # at the end of loop , check if number of remaining lines is consistent with number of map voxels
-        if (i != (nvoxel[0] * nvoxel[1] * nvoxel[2] - 1)):
-                print(nvoxel[0] * nvoxel[1] * nvoxel[2])
-                print("ACHTUNG!")
-                stop	
+        # lamian for nucleolus 
+        if (vol.body_idx == 1) and (self.k >0):
+
+                center = center / self.contact_range
+                origin = origin / self.contact_range
+                grid   = grid   / self.contact_range
+               
+        nvoxel = vol.nvoxel
 
         # discriminate between nucleolus and nucleus
-        if body_idx == False:
+        if vol.body_idx == False:
 
-          # compute effective map radius as geometric mean of the axes
-          R_eff = np.abs((origin[0] * origin[1] * origin[2])) ** (1./3)
-
-          for k, i in enumerate(self.particle_ids):
+          for m, i in enumerate(self.particle_ids):
 
               idx = np.zeros(3)
               id_int = np.zeros(3).astype('int')
 
               p = particles[i]
 
-              # find indexes
+              # find voxel the particle is in, e.g. (i,j,k)
               idx = (p.pos - origin)/grid
 	    
               # are indexes outside of the three d volume spanned by the map box? If yes, set index to -1
-              if (idx[0] < 0) or (idx[0] >= nvoxel[0]):
-               	id_int[0] = -1.0
-                #print("I mean 0")
+              id_int[0] = -1.0 if ((idx[0] < 0) or (idx[0] >= nvoxel[0])) else  round(idx[0])
+              id_int[1] = -1.0 if ((idx[1] < 0) or (idx[1] >= nvoxel[1])) else  round(idx[1])
+              id_int[2] = -1.0 if ((idx[2] < 0) or (idx[2] >= nvoxel[2])) else  round(idx[2])
+
+              # if voxel is inside the grid AND outside of the envelope
+
+              if (id_int.all() >=0):
+
+                   # pixel is outside the lamina and volume confinement   OR   pixel inside the lamina and lamina DamID
+                   if ((vol.int_matrix[tuple(id_int)] == 0) and (self.k > 0)) or ((vol.int_matrix[tuple(id_int)] != 0) and (self.k < 0)): 
+    
+                      # this is the vector (point to envelope), then the vector (center to envelope)
+                      scores[m] = np.linalg.norm(grid * (vol.matrice[tuple(id_int)] - id_int))/np.linalg.norm(grid)
+
+                   # else, in the grid and inside the lamina, no violation, no issue
+
+              # if voxel is outside the grid
               else:
-                id_int[0] = int(idx[0])
+    
+                   if self.k > 0:    # if lamina DamID, no problem
+                      print('We are somehow outside of the volumetric grid, so we could use a radial thing to be coded, max distance in grid')
+                      scores[m] = np.linalg.norm(grid * idx)
 
-              if (idx[1] < 0) or (idx[1] >= nvoxel[1]):
-                id_int[1] = -1.0
-                #print("I mean 1")
-              else:
-                id_int[1] = int(idx[1])
 
-              if (idx[2] < 0) or (idx[2] >= nvoxel[2]):
-                id_int[2] = -1.0
-                #print("I mean 2")
-              else:
-                id_int[2] = int(idx[2])
+        #THIS IS FOR THE NUCLEOLUS OR WHATEVER
+        if vol.body_idx == True:
 
-              if ((id_int[0] < 0) or (id_int[1] < 0) or (id_int[2] < 0) or (matrice[id_int[0], id_int[1], id_int[2]] == 1)):
-                
-                scores[k] = np.abs((np.linalg.norm(p.pos - center))/R_eff - 1.0)   # the closest to the envelope
-
-        if body_idx == True:
-
-          for k, i in enumerate(self.particle_ids):
+          for m, i in enumerate(self.particle_ids):
 
               idx = np.zeros(3)
               id_int = np.zeros(3).astype('int')
@@ -370,76 +381,30 @@ class ExpEnvelope(Force):
               idx = (p.pos - origin)/grid
 
               # are indexes outside of the three d volume spanned by the map box? If yes, set index to -1
-              if (idx[0] < 0) or (idx[0] >= nvoxel[0]):
-                id_int[0] = -1.0
-                #print("I mean 0")
+              id_int[0] = -1.0 if ((idx[0] < 0) or (idx[0] >= nvoxel[0])) else round(idx[0])
+              id_int[1] = -1.0 if ((idx[1] < 0) or (idx[1] >= nvoxel[1])) else round(idx[1])
+              id_int[2] = -1.0 if ((idx[2] < 0) or (idx[2] >= nvoxel[2])) else round(idx[2])
+
+              # if inside the volume grid
+              if (id_int.all()>=0):
+
+                  # if inside the body and looking for volume confinemt  OR  outsid the nucleolus but with lamina DaMID
+                  if ((vol.int_matrix[tuple(id_int)] != 0) and (self.k > 0)) or ((vol.int_matrix[tuple(id_int)] == 0) and (self.k < 0)): 
+
+                     # this is the vector (point to envelope), then the vector (center to envelope)
+                     scores[m] = np.linalg.norm(grid * (vol.matrice[tuple(id_int)] - id_int))/np.linalg.norm(grid)   # p.pos - center)  # the closest to the envelope
+
+              # if outside the grid: 
               else:
-                id_int[0] = int(idx[0])
-
-              if (idx[1] < 0) or (idx[1] >= nvoxel[1]):
-                id_int[1] = -1.0
-                #print("I mean 1")
-              else:
-                id_int[1] = int(idx[1])
-
-              if (idx[2] < 0) or (idx[2] >= nvoxel[2]):
-                id_int[2] = -1.0
-                #print("I mean 2")
-              else:
-                id_int[2] = int(idx[2])
-
-              if ((id_int[0] >= 0) and (id_int[1] >= 0) and (id_int[2] >= 0) and (matrice[id_int[0], id_int[1], id_int[2]] == 1)):
-
-                scores[k] = np.linalg.norm(p.pos - center)  # the closest to the envelope
+                if self.k < 0:
+                    # technically there is no violation here, since the stuff is outside the nucleolus. 
+                    # if the lamina DAmID case, that would be pathological, with a particle outside of the boundary which should be instead close to the lamina
+                    # should that occur, let's use the actual particle coordiantes and the center of mass of the nucleolus to compute the violation score
+                    scores[m] = np.linalg.norm(p.pos - center)/np.linalg.norm(grid)
 
         return scores
 
     def getViolationRatios(self, particles):
-        return self.getScores(particles) / (self.k * self.scale)
+        return self.getScores(particles)
 #---------
-
-class NuclExcludedVolume(Force):
-
-    """ Define penalty term for nucleolus excluded volume. If compenetrazione, return a positive value, 
-        if no violations, return 0, easy """
-
-    ftype = Force.NUCL_EXCLUDED_VOLUME
-
-    def __init__(self, particles, body_pos, body_r, k=1.0, note=""):
-    
-        self.particles  = particles
-        self.body_pos   = np.array([body_pos])     # coordinates of nucleolus center (has to be a (3,1) array)
-        self.body_r     = body_r                   # radius of spherical nucleulus
-        self.k          = k
-        self.note       = note
-
-    def __str__(self):
-        return "FORCE: {} (NATOMS: {}) {}".format(Force.FTYPES[self.ftype],
-                                                  len(self.particles),
-                                                  self.note)
-
-    def getScore(self, particles):
-        return self.getScores(particles).sum()
-
-    def getScores(self, particles):
-
-        """ Define penalty term for nucleolus excluded volume. If nucleolus - bead compenetration, return a 
-            positive penalty value equalling (r_n + r_i - d(n,i)); otherwise, return 0"""
-
-        # scipy.spatial.distance takes an array X (m, n); m = observations, n = space dimensionality
-        from scipy.spatial import distance
-
-        crd = np.array([particles[i].pos for i in self.particles])
-        dist = distance.cdist(crd, self.body_pos)   # distance between all particle centers and nucleulus center
-                                               # it is a (n,1) array, n = number of particles
-        rad = np.array([[particles[i].r for i in self.particles]]).T
-        cap = rad + self.body_r     # sum of radii
-
-        # if (r_i + r_j) - d_ij < 0, then no penalty, so clip value to 0, otherwise, keep number
-        s = (cap - dist).clip(min=0)
-
-        # get rid of extra dimensions, turn this into a (n) array
-        return s.ravel()
-
-#-
 
