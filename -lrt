@@ -1,0 +1,1661 @@
+[33mcommit 9149614bbd93a6d1658054e10e2562ee79ff3841[m
+Author: Lorenzo Boninsegna <lorenzobonimba@gmail.com>
+Date:   Wed May 14 11:46:43 2025 -0700
+
+    Initial commit
+
+[33mcommit f161ad124cdce53c2748c9e5981acc23f7b8b896[m
+Author: Lorenzo Boninsegna <lorenzobonimba@gmail.com>
+Date:   Wed Mar 22 10:50:24 2023 -0700
+
+    update
+
+[33mcommit f403381bdfae9062fdf217caba1cb11691b80bab[m
+Author: Lorenzo Boninsegna <lorenzobonimba@gmail.com>
+Date:   Wed Mar 22 10:46:26 2023 -0700
+
+    work from the last few years, which is stored on Hoffman2
+
+[33mcommit d93e9d347e64e2153a341416c438dc90201c707f[m
+Author: Lorenzo Boninsegna <lorenzobonimba@gmail.com>
+Date:   Wed Mar 22 10:45:42 2023 -0700
+
+    igm-run.sh accounting for imaging
+
+[33mcommit d5fee674ab89e482984c74c05a2a1625a8c85c8b[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Mar 21 18:14:21 2023 -0700
+
+    new_README
+
+[33mcommit aed16c1338bf8eeade556243ef5b747cc7ee36cc[m
+Author: user <user@compspts-iMac.lan>
+Date:   Fri Sep 17 11:16:00 2021 -0700
+
+    edit
+
+[33mcommit 1bc97b39688e5ca2ec7b8c5c9d89ed4cdb618fa4[m
+Author: user <user@compspts-iMac.lan>
+Date:   Fri Sep 17 11:14:22 2021 -0700
+
+    installation on MacOS
+
+[33mcommit 2a9240b3fca621534fe7ae8ee8b84ec38f329c72[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Thu Sep 16 12:24:06 2021 -0700
+
+    Update README.md
+
+[33mcommit d6e8cf13761e6348100a2fa1459b01d6d795450b[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Thu Sep 16 12:20:17 2021 -0700
+
+    Update README.md
+
+[33mcommit 934143f0130501881782d0e7181a404574d02694[m
+Author: user <user@compspts-iMac.local>
+Date:   Thu Sep 16 12:11:05 2021 -0700
+
+    intra/inter
+
+[33mcommit d347cf512840f1292493236a7bcadcf56704846a[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Thu Sep 16 12:09:12 2021 -0700
+
+    Update igm-run
+
+[33mcommit 254dfecd23b39fe6f8b0f3e53b4163cb0a6e889f[m
+Merge: 0bb773f a567eba
+Author: user <user@compspts-iMac.local>
+Date:   Thu Sep 16 11:25:53 2021 -0700
+
+    Merge branch 'master' of https://github.com/alberlab/igm
+
+[33mcommit 0bb773f336d2cefff691a3cf44911b0668860ec0[m
+Author: user <user@compspts-iMac.local>
+Date:   Thu Sep 16 11:25:41 2021 -0700
+
+    restraint labels
+
+[33mcommit a567eba1f041c1a16052d3f22be037e4bf38d3c2[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Thu Sep 16 11:11:57 2021 -0700
+
+    Update README.md
+
+[33mcommit 0a10620e845b74683b3fb5238ed2c7c2858c120b[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Thu Sep 16 10:20:15 2021 -0700
+
+    Update README.md
+
+[33mcommit c296e3a935a127eb9504cda35ed3c55941bc037a[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Thu Sep 16 10:12:55 2021 -0700
+
+    Update README.md
+
+[33mcommit 16ecb60bd36038c9ddcd6afb0a90f754b069d9cb[m
+Author: user <user@compspts-iMac.local>
+Date:   Thu Sep 16 09:59:23 2021 -0700
+
+    inter/intra
+
+[33mcommit eecbb8234bc1f3d36a59e0c59f790e7a912542f0[m
+Author: user <user@compspts-iMac.lan>
+Date:   Wed Sep 15 13:11:54 2021 -0700
+
+    sample_outputs
+
+[33mcommit b23f6cfae76d1b17f82e49ae3f1e9b72f6ccccce[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Wed Sep 15 13:05:06 2021 -0700
+
+    Update ActivationDistanceStep.py
+
+[33mcommit a2a2d29af0f219fe9e8e25e5104513b84888e3d0[m
+Author: user <user@compspts-iMac.lan>
+Date:   Tue Sep 7 11:25:08 2021 -0700
+
+    update
+
+[33mcommit 4b5e8c6435b9e4031e0d1de1fb4948da95b0f3b4[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Sep 7 11:23:19 2021 -0700
+
+    Delete HCP_scripts directory
+
+[33mcommit 44fad558bec4063cb810adf3db7d0a0023798c5c[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Sep 7 11:23:02 2021 -0700
+
+    Delete test directory
+
+[33mcommit 6ee000cad3c472d4f0586fb62457b3103152eb08[m
+Author: user <user@compspts-iMac.lan>
+Date:   Tue Sep 7 11:11:33 2021 -0700
+
+    polish
+
+[33mcommit 37d2a3c3fccc0c167d5cb849dbc35211eaae3249[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Sep 7 09:01:47 2021 -0700
+
+    Update README.md
+
+[33mcommit f14958a3179738308d158434fea736d2dd5024d5[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Sep 7 08:58:43 2021 -0700
+
+    Update README.md
+
+[33mcommit 320e187be368536d59a1147391432eed6e7e72a4[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Sep 7 08:56:19 2021 -0700
+
+    Update steps_to_submit_IGM.txt
+
+[33mcommit 35d65931602ceafdca312ee568c2f8b3d8ebc7fd[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Sep 7 08:49:36 2021 -0700
+
+    Update README.md
+
+[33mcommit 200c95e0be35ec53bb3906435855bfa53d09745f[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Sep 7 08:47:57 2021 -0700
+
+    Update README.md
+
+[33mcommit 580f3235f5b7b4afddfd1aeff5887988a867a027[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Sep 7 08:47:38 2021 -0700
+
+    Update README.md
+
+[33mcommit cdd0347551ced31a2aa8937a1959642677caa264[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Sep 7 08:47:02 2021 -0700
+
+    Update README.md
+
+[33mcommit 36479fe624cfe8b1c2e36fede4df28f0555b3f06[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Sep 7 08:45:13 2021 -0700
+
+    Update README.md
+
+[33mcommit 30c8cef222d58c4defb29021fa9bd995d1676b8f[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Sep 7 08:43:11 2021 -0700
+
+    Update README.md
+
+[33mcommit bca0c4fdedfb35f9d5b336db7ce6a08688496006[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Sep 7 08:35:42 2021 -0700
+
+    Update README.md
+
+[33mcommit 5099398906259c9a095fe3e46e12c926774213ec[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 23:56:57 2021 -0700
+
+    Update README.md
+
+[33mcommit 60d31647c5666c0113efd0739615f4fa95c55f03[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 23:54:00 2021 -0700
+
+    Update README.md
+
+[33mcommit d697ee96debe20037494cb33fb2ad23d3c884ed0[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 23:49:08 2021 -0700
+
+    Update README.md
+
+[33mcommit 60eb3b6509852600a4f90328583a74c73513364e[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 23:47:09 2021 -0700
+
+    Update README.md
+
+[33mcommit 8d629e169e54c51b86485a251d6feee3f5d870f3[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 23:46:04 2021 -0700
+
+    Update igm-config_all.json
+
+[33mcommit a660a0f8440c3cb917f77c1d2eae2dda4c03b363[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 23:08:35 2021 -0700
+
+    Update README.md
+
+[33mcommit d020e97bd4ade963b79734e76e4a0ed6be517a48[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 23:06:53 2021 -0700
+
+    Update README.md
+
+[33mcommit f8eebc943b6fad9a6865e282a2ca069df8e6436d[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 23:02:50 2021 -0700
+
+    Update README.md
+
+[33mcommit a30e39bf97e92f9edd3f0c2b402b3aa24c4b067f[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 23:01:34 2021 -0700
+
+    Update README.md
+
+[33mcommit 4d4f5ee284d299928d7625a653a0f370d0430c1c[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:59:23 2021 -0700
+
+    Update README.md
+
+[33mcommit 21bda57b450fb451600e78e21aa02754727a1441[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:55:20 2021 -0700
+
+    Update README.md
+
+[33mcommit 994877cc41aa781e086559449f448c0a20f907f9[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:53:36 2021 -0700
+
+    Update README.md
+
+[33mcommit 564778657641b809c48901687fc4977063b83ac9[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:52:17 2021 -0700
+
+    Update README.md
+
+[33mcommit 4be0eb326feeaa47e7abe5a88d11abd4bc84b046[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:51:37 2021 -0700
+
+    Update README.md
+
+[33mcommit 1763b65cc0fde2bf6f21146dc7e8fbc39a2c25a7[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:45:57 2021 -0700
+
+    Update and rename steps_to_submit_IGM to steps_to_submit_IGM.txt
+
+[33mcommit 14ba78479041fd70b79a4f4612337d97fc588908[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:44:26 2021 -0700
+
+    Update README.md
+
+[33mcommit 6d19cc9b8cf8088795cd7481d4e8d84d4addc9de[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:43:05 2021 -0700
+
+    Update README.md
+
+[33mcommit 73c8033e620e50b3836604e7c9cbfdf237feae6c[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:41:27 2021 -0700
+
+    Update README.md
+
+[33mcommit a1969996952efedad414aac551f560728af89e45[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:39:48 2021 -0700
+
+    Update ActivationDistanceStep.py
+
+[33mcommit 4eb3ef852ae8edc4f3d01f3f18ae146be7a50152[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:34:48 2021 -0700
+
+    Update ActivationDistanceStep.py
+
+[33mcommit ad1ce4d4d4e4843b6700bf61dc0071b0c287f4c0[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:27:28 2021 -0700
+
+    Update config_schema.json
+
+[33mcommit ae353997b5b91f965dfb515bb8fb1e7c90d51d0d[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:24:20 2021 -0700
+
+    Update FishAssignmentStep.py
+
+[33mcommit bc8ee5ccdfd8401e3a37154f22fafbea84b60c01[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:19:25 2021 -0700
+
+    Update igm-config_all.json
+
+[33mcommit cb43f39b9264f437c0c25f340d9bd94966a06da0[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:17:38 2021 -0700
+
+    Update igm-config_all.json
+
+[33mcommit 0d0c5b5f0660c3e35fe9983e34907352edc4ad2c[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:13:29 2021 -0700
+
+    Create igm-config_all.json
+
+[33mcommit 3ca18b207a13acd374537bebe989bf2540284b40[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:12:52 2021 -0700
+
+    Update README.md
+
+[33mcommit dce2947608ab6c002c79fff543f0947aad0bb7fd[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:11:18 2021 -0700
+
+    Update README.md
+
+[33mcommit 5f08a7a11082c964c47ac2947899cdbb10c7a512[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:06:12 2021 -0700
+
+    Update README.md
+
+[33mcommit ac4e1ec716feac1255131e64587179aeaa4f66c8[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:05:15 2021 -0700
+
+    Update steps_to_submit_IGM
+
+[33mcommit b32d5abd5c35edf8028d84848989a50e4bf660cb[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 22:03:32 2021 -0700
+
+    steps_to_submit_IGM_on_HPC
+
+[33mcommit d23fe677be21c65adff851a449daf8fd74cb821e[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 21:58:38 2021 -0700
+
+    Update submit_igm.sh
+
+[33mcommit 872ed21d32b37e4a26f27a8c3571ab3e10059fb1[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 21:54:50 2021 -0700
+
+    Update README.md
+
+[33mcommit 254cc9f6d09421dc45f7b927fbbbd19c2052b1f9[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 21:48:31 2021 -0700
+
+    Update README.md
+
+[33mcommit 187e6b2e5872d0692a7da6622c199b002c4fb4e0[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 21:47:03 2021 -0700
+
+    Update README.md
+
+[33mcommit 192907181d316262877f1a3fa1e2eb53935ef687[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Sep 6 21:46:32 2021 -0700
+
+    Update README.md
+
+[33mcommit 500ec2410646e2524b0e7cea6232e51abce596c7[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Aug 20 17:59:56 2021 -0700
+
+    Update README.md
+
+[33mcommit 6dc07f29e6d61714169b70d278c914c41d90b045[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Aug 20 17:58:34 2021 -0700
+
+    Update README.md
+
+[33mcommit 5bd541a27cf07b3dc4a32a0444bab2e87e94d76d[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Aug 20 17:57:13 2021 -0700
+
+    Update README.md
+
+[33mcommit 967398cfc9ae34a88c83e47b5e98f3588e410c6d[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Aug 20 17:56:49 2021 -0700
+
+    Update README.md
+
+[33mcommit 1284a13ff13514429b96edb14e1f1cbb82a61829[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Aug 20 17:54:34 2021 -0700
+
+    Update README.md
+
+[33mcommit fdd0c34c5c77fe39e3d703bab9f3c61d12c0eb40[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Wed Apr 14 11:31:08 2021 -0700
+
+    Spriteloop, documentation,code breakdown
+
+[33mcommit bcea0326f6f0a5d59d11d27008400b47a1d5d92d[m
+Author: Jitin Singla <jsinglausc@users.noreply.github.com>
+Date:   Fri Sep 18 17:48:26 2020 -0700
+
+    Update setup.py
+    
+    Editted "package_data" variable.
+
+[33mcommit bcfaff842601105dc994bc1d31d404a2224ac9a2[m
+Author: Jitin Singla <jsinglausc@users.noreply.github.com>
+Date:   Fri Sep 18 17:45:20 2020 -0700
+
+    Update README.md
+
+[33mcommit 230f3b187e326df3559adb56fc3ec1b61db8be95[m
+Author: Jitin Singla <jsinglausc@users.noreply.github.com>
+Date:   Wed Sep 16 01:23:21 2020 -0700
+
+    Update README.md
+
+[33mcommit 0cebe976715ca93eedbca3bde7dae7f4551793cd[m
+Author: Jitin Singla <jsinglausc@users.noreply.github.com>
+Date:   Tue Sep 15 22:25:45 2020 -0700
+
+    Update README.md
+
+[33mcommit ee2967fcd65d19b5889395b2758daaddced08d03[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Jun 23 16:24:39 2020 -0700
+
+    Update README.md
+
+[33mcommit a5ddcbb0e142972bec662416ec211749b2c894d8[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Thu May 7 16:36:28 2020 -0700
+
+    Update README.md
+
+[33mcommit 029b99d86e0d0cd819914a7f0276e6f32658797b[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon May 4 17:06:36 2020 -0700
+
+    Update README.md
+
+[33mcommit d6757755975dda460589f19fcbddc951157d381e[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Apr 24 11:08:00 2020 -0700
+
+    FISH radial AND pair, tested, OK
+
+[33mcommit 7772876076e1ab1130acfe72f8996c44b8c28257[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Apr 6 17:52:28 2020 -0700
+
+    FISH2.0
+
+[33mcommit faa3c2c40361a96e323da571a41819aaf5623b78[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Apr 6 17:49:25 2020 -0700
+
+    FISH adjusted
+
+[33mcommit d7d67cc18d944902be290619b42ab94154b40c70[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Mar 27 16:52:07 2020 -0700
+
+    FISH data assigned and modeled finally
+
+[33mcommit 0a73d4453b4ccbed118f0671376c1a6789fe2a8c[m
+Merge: 4ea2303 867ec68
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Mar 23 12:40:09 2020 -0700
+
+    Merge branch 'master' of https://github.com/alberlab/igm
+
+[33mcommit 4ea230391da50afc73d682e38c4dc0c938772634[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Mon Mar 23 12:39:14 2020 -0700
+
+    updated logger, violation calculation, distinguish between ANY violation and within-tolerance violation
+
+[33mcommit 867ec68f72bd122afa903e56219f51bc36c91554[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Mar 13 18:56:43 2020 -0700
+
+    Delete config_test.json
+
+[33mcommit 81952e7b4afb6105ece433b9f18692d77bc24d2c[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Mar 13 18:56:24 2020 -0700
+
+    Delete startWorker.sh
+
+[33mcommit b0d56006a53c1034b1460f54a2518de21f33e282[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Mar 13 18:56:10 2020 -0700
+
+    Delete ipworkernode.pbs
+
+[33mcommit fa158b226d3473166db01da7a87ceb9fe0e7b728[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Mar 13 18:55:56 2020 -0700
+
+    Delete startController.sh
+
+[33mcommit 446dec8f8d70fb6cd09962ba074880860f700fbb[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Mar 13 18:49:46 2020 -0700
+
+    scaled up/down envelopes
+
+[33mcommit 3de772e8a8677d513b778dd7db2ae5b5ff2fe45c[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Thu Mar 12 11:02:24 2020 -0700
+
+    Update README.md
+
+[33mcommit 62e6acf4ebdbeee928c07c12049c99bd494368fc[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Wed Mar 11 16:00:55 2020 -0700
+
+    defaults, test
+
+[33mcommit 86917d2f21661ac7fbed52fe2d93e967081504b9[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Feb 28 15:05:53 2020 -0800
+
+    update
+
+[33mcommit 4dd65bdf8139d14db7acdafc9a26de0a77a174e5[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Feb 28 14:45:33 2020 -0800
+
+    sge submission scripts
+
+[33mcommit 582765a4897f0e9f3e93b484f4d87c533deeeb59[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Feb 28 14:17:26 2020 -0800
+
+    docs
+
+[33mcommit 2f8e908f1f316a8d2b36b913768659f800d19192[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Feb 28 14:13:33 2020 -0800
+
+    docs
+
+[33mcommit d0d0a3368b7bc9dfc543d867e3ef1cecb8bc550f[m
+Merge: 3f998ff 20d48a5
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Thu Feb 27 18:30:41 2020 -0800
+
+    Merge branch 'master' of https://github.com/alberlab/igm
+
+[33mcommit 3f998ffc3336b2ca2a01cd999b84afe8593c9c93[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Thu Feb 27 18:30:09 2020 -0800
+
+    volumetric restraints coded
+
+[33mcommit 20d48a5df6e316b9c67f2c39b648a2e3ad5e740c[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Thu Feb 27 18:28:38 2020 -0800
+
+    Delete IGM_documentation.docx
+
+[33mcommit 97aad327c996bbba7e5590b5ea17fa992685ce98[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Thu Feb 27 18:24:52 2020 -0800
+
+    documentation
+
+[33mcommit 76091a766a1c0ae350c15e28088cbc600c2ff934[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Fri Sep 6 15:01:12 2019 -0700
+
+    alabtools installation for MacOS fix
+
+[33mcommit 8d499f052d2b87d113c636ed352a85ec2b790563[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Aug 27 16:29:59 2019 -0700
+
+    added documentation from Drive
+
+[33mcommit cbc8e2b5cd1d288a29608b42f43f6fcf0a5253eb[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Aug 27 16:26:08 2019 -0700
+
+    iterative probability correction commented
+
+[33mcommit 974db53c5ac0f8892053573bf7f4e110948bc4ae[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Aug 27 12:12:56 2019 -0700
+
+    fixed REDUCE step slowdown, added tons of comments
+
+[33mcommit 1882606f6fbd4a1554860bed4187aa95c30e8a63[m
+Author: bonimba87 <lorenzobonimba@gmail.com>
+Date:   Tue Aug 27 10:06:52 2019 -0700
+
+    minor edit
+
+[33mcommit d293b054b2783de50f3f2483c7679c071031c29a[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Tue Jul 23 23:06:37 2019 -0700
+
+    change to in memory file poller
+
+[33mcommit a803d696a33bf61ee9341f99d51fe4f2532491fb[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Apr 1 14:58:24 2019 -0700
+
+    basic email support
+
+[33mcommit 7c69fd440d376416b541e66807e51f8e8f46e90d[m
+Merge: b37567a 662e3e1
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Apr 1 13:39:07 2019 -0700
+
+    Merge branch 'sprite_hotfix'
+
+[33mcommit 662e3e1e095f6c4fd2d88119eeb07366c2d9fe51[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Apr 1 13:31:05 2019 -0700
+
+    updated readme
+
+[33mcommit 3b371892a1d7c99307cc693c3fe3d36cdd6285c2[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Mar 26 16:16:34 2019 -0700
+
+    read intention on sprite assignment file
+
+[33mcommit 9070ca7117b7b1f05c2c9ce29fccca008e78ab51[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Mar 25 11:50:48 2019 -0700
+
+    fix sprite paths
+
+[33mcommit b37567ab4c31e3ea841293590a497def1af7d739[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Mar 25 11:00:16 2019 -0700
+
+    merge
+
+[33mcommit 6faf02a2799db56c1cd811ee4a2c1f21c3ac3f80[m
+Merge: a8957a6 36581f4
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Mar 25 10:56:29 2019 -0700
+
+    Merge remote-tracking branch 'origin/master'
+
+[33mcommit a8957a6b6a09fb4fe8bd6a7043b8cf79a806b8a4[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Mar 25 10:56:20 2019 -0700
+
+    minor changes
+
+[33mcommit cd23012bf797722ab1d9b4c6cef94c5d81193026[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Mar 25 10:52:33 2019 -0700
+
+    working with well-formed input
+
+[33mcommit 36581f4ed0377d446f294584a5b2d238fc87357f[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Mar 20 08:58:35 2019 -0700
+
+    absolute output directory
+
+[33mcommit 0e7498a1c2333426a9d4fe6b20c4807c27715f67[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Mar 11 11:57:54 2019 -0700
+
+    correcly select inter/intra sigmas if specified
+
+[33mcommit fa5f393fa24bdaa5d05acdab36d0ecce063fcdf5[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Mar 11 11:27:39 2019 -0700
+
+    included report as module
+
+[33mcommit 5062be0fb17eb734fb56993d45b7859b0ab3a628[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Mar 8 09:30:13 2019 -0800
+
+    minor changes
+
+[33mcommit f0d4d5a41913143cf6c9b4eb815ee6521611e559[m
+Merge: 15d13e8 f0a7d9c
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Mar 8 09:08:00 2019 -0800
+
+    Merge branch 'untested'
+
+[33mcommit f0a7d9cbf8e644e9071eb5c40cd2ee4e33257cb2[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Mar 7 22:13:45 2019 -0800
+
+    save all the config in the hss
+
+[33mcommit 7f119c51c7fa2ad82adcb23dd2c9036df8e2178e[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Mar 7 22:13:17 2019 -0800
+
+    config get allows None
+
+[33mcommit e35bdeb79191e36ef3eef0010eeb7ee2d1642532[m
+Author: Guido <turtle.inside@gmail.com>
+Date:   Wed Mar 6 16:39:20 2019 -0800
+
+    untested modeling configuration save
+
+[33mcommit 9200ec69c19bee306fdfe71a3d1398e0118fafd4[m
+Author: Guido <turtle.inside@gmail.com>
+Date:   Wed Mar 6 16:38:42 2019 -0800
+
+    default configurations
+
+[33mcommit a26c45dcbadbb836cb2352efe16e2788c2df4e59[m
+Author: Guido <turtle.inside@gmail.com>
+Date:   Wed Mar 6 16:37:12 2019 -0800
+
+    readme
+
+[33mcommit 15d13e804c5d5cc849cfecdc3b6f039a7faaa87e[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Feb 28 17:57:13 2019 -0800
+
+    damid fixes
+
+[33mcommit 22c50aacdbe7c69a4cf205956023331d5942b4ae[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Feb 19 10:57:13 2019 -0800
+
+    and -> or
+
+[33mcommit d800184dda4be5fbee3766b5554e2af37c4f5b03[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Feb 19 10:47:40 2019 -0800
+
+    do not overwrite when restarting and starting_coordinates is specified
+
+[33mcommit 90d4f3aa84fcac3bd17e2317e79a6474560d380d[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Feb 19 10:28:48 2019 -0800
+
+    fix hic with different inter/intra finishing early
+
+[33mcommit 85524a3f87d137d61b5c44d97fff3f41fd8f8317[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Feb 18 18:02:53 2019 -0800
+
+    fixed requirements
+
+[33mcommit ee9904b243fdaee3b52a1e3716806da41e8812e3[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Feb 14 12:07:58 2019 -0800
+
+    separate intra-inter theta probabilities
+
+[33mcommit 5fd0dfc471661acda5e2d30a76187b8781e9bb28[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Mon Dec 10 14:43:13 2018 -0800
+
+    fix lammps temp/rescale damp factor type
+
+[33mcommit daef758c21c9ade9b8833f984da4e033ced8d696[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Dec 6 11:52:26 2018 -0800
+
+    small fixes
+
+[33mcommit 477ea490a339824dc72ca8177c8a46f5829b7b3b[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Dec 5 18:23:26 2018 -0800
+
+    minor fixes
+
+[33mcommit 1cad64bf98fb9bba69de6da6d54281b1a0d3f113[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Nov 21 14:04:00 2018 -0800
+
+    colors fix
+
+[33mcommit fc0a7cf7981c61c49c1deefc6e339fc6c81600c8[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Sat Nov 17 09:57:38 2018 -0800
+
+    major fixes + email notifications
+
+[33mcommit a4706c7fb0a6bf0bd337ab0a22d02f56fc5236b5[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Nov 16 09:13:03 2018 -0800
+
+    fixes on multiprocessing info
+
+[33mcommit 3cdf2d499946b700681392b34b7ffbe9db53dd53[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Nov 15 11:42:44 2018 -0800
+
+    async file poller use multiprocessing instead of threading
+
+[33mcommit 3368f3aa11cb562965ee74c7e8d6b314ab297884[m
+Merge: 0aa1da0 e359633
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Nov 15 10:27:33 2018 -0800
+
+    Merge branch 'master' of github.com:alberlab/igm
+
+[33mcommit 0aa1da0ce7ad5fc0e0bdefb0774d42cb1cf68e77[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Nov 15 10:27:27 2018 -0800
+
+    ensure int on damid
+
+[33mcommit e359633d4a09e6f05d5d5655ed83d8cae35b8e2e[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Nov 15 10:24:43 2018 -0800
+
+    small fixes for damid
+
+[33mcommit dd13105376755783a8b791791f128440cfb26860[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Nov 15 09:32:27 2018 -0800
+
+    damid fixes
+
+[33mcommit 03fd08da3418ed34053059368ef8bb1cdb83fd96[m
+Merge: 683e490 f6c3157
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Nov 14 14:30:33 2018 -0800
+
+    Merge branch 'master' of github.com:alberlab/igm
+
+[33mcommit 683e4906daeedbe766e0fd3c220e6dd5082971da[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Nov 14 14:30:17 2018 -0800
+
+    envelopes without affected beads are ignored
+
+[33mcommit f6c31577fbe9cb339a9a63e96d35072674df24a3[m
+Merge: a1b20f7 1ab6b0a
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Nov 14 14:12:52 2018 -0800
+
+    Merge branch 'master' of github.com:alberlab/igm
+
+[33mcommit a1b20f78665365476d61bf41b3f680aa1cad95f9[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Nov 14 14:12:46 2018 -0800
+
+    shutil move instead of rename
+
+[33mcommit 1ab6b0a4a8be86a5ce1b35983bb07710a8250c40[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Nov 14 14:11:41 2018 -0800
+
+    minor fixes
+
+[33mcommit 643bb0a91ae67d9643aad34490f2e39020e8b951[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Nov 13 09:42:09 2018 -0800
+
+    igm-stop
+
+[33mcommit 525e47562528c3389ff47ef97860e78506e7fc05[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Nov 12 11:21:13 2018 -0800
+
+    default schema changes + forcing min iters below a certain threshold for HiC
+
+[33mcommit 78a03b016675cfacf6f4860bb9408858aa9291f2[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Nov 7 18:35:05 2018 -0800
+
+    IGM control using unix socket
+
+[33mcommit 9e6e087586bb8afccc114e66aca6a0636ba0ad11[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Nov 6 14:00:25 2018 -0800
+
+    Clean restart of modeling runs defaults to false and small UI changes.
+
+[33mcommit b63d37b2a0f7455df0a12618b0ed1b60ec81ee8f[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Nov 6 13:23:02 2018 -0800
+
+    Restart of modeling runs and small UI modifications
+
+[33mcommit fe66ef7278f2a1376acc5b10d207ea7c2704bda9[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Nov 2 15:55:02 2018 -0700
+
+    improvements on custom annealing protocol
+
+[33mcommit f301ea2e5afeebfb7ede0ef0b9a8fe944a334d13[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Nov 1 16:09:15 2018 -0700
+
+    bugfix n2
+
+[33mcommit 535f019d87b1bae1fc6790d44c913faeca39fc96[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Nov 1 15:54:43 2018 -0700
+
+    merge branch master
+
+[33mcommit ebd77d1e52253f005aef142f85668ebcdeb8f084[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Nov 1 15:52:00 2018 -0700
+
+    bugfixes
+
+[33mcommit b8310dc4667117495ba2552249db2804df39d4c1[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Oct 31 12:17:15 2018 -0700
+
+    parameter page updates fixed on changedir
+
+[33mcommit 8c84a7eb8f3ea4e1400de6352eccdadbe09d3dfd[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Oct 30 21:07:41 2018 -0700
+
+    fix energy reporting
+
+[33mcommit 7af8008a318b31565c0691e104833236fb78a0b0[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Oct 30 20:46:48 2018 -0700
+
+    specify annealing protocol
+
+[33mcommit 5b90b8eac0a5e04e3793583f21a0372fa7097ab5[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Oct 29 14:57:11 2018 -0700
+
+    small fix for consistency
+
+[33mcommit bf047761250353a1e0d12a87a7d1fde31d80989a[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Oct 26 14:21:06 2018 -0700
+
+    save additional violations information
+
+[33mcommit 3352bad568a1acc567e51a8fe211f89334b080e3[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Oct 25 11:49:33 2018 -0700
+
+    nohup redirection fix
+
+[33mcommit 327145595b5a4dbe4d1b19d2db6220ebeeca18a6[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Oct 25 11:48:35 2018 -0700
+
+    envelope collective force per bead methods
+
+[33mcommit 04f1d56d5adb8a02dcadf0276c93a9ddb8db9fcb[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Sat Oct 13 23:53:26 2018 -0700
+
+    damid bugfix
+
+[33mcommit 23f45f63f1127fe7684a71e6fdd86f27eddfc744[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Sat Oct 13 19:32:51 2018 -0700
+
+    ellipse damid bugfix
+
+[33mcommit 86ba60b3bad07e263b7732253882e1e267d1c138[m
+Merge: ed95003 a8f461d
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Oct 12 19:50:37 2018 -0700
+
+    Merge branch 'master' of github.com:alberlab/igm
+
+[33mcommit a8f461d96a8fd842f8f22c0c3cbac00e03606f73[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Oct 12 19:48:40 2018 -0700
+
+    DamID small modifications for multiploid cells
+
+[33mcommit ed950037a9debc0ac1e187a1de19c2cf7ad592e0[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Oct 11 22:44:46 2018 -0700
+
+    bugfix
+
+[33mcommit 2d30c93472e08499001ace531f07f247fc081b4c[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Oct 11 22:42:57 2018 -0700
+
+    create a <completed> file
+
+[33mcommit b8ccb184d2e52baeac45e02176c440e8a20d223b[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Oct 11 22:17:51 2018 -0700
+
+    pycharm gitignore, bin registration scripts
+
+[33mcommit 077cebcd84ebe7f5ac9a087c5a6e374657f63b06[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Oct 11 22:07:08 2018 -0700
+
+    shape-based damid restraint
+
+[33mcommit c8e81587306d971400625b6344d7d55417130db7[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Oct 11 04:26:16 2018 -0700
+
+    bugfix
+
+[33mcommit db41c758242309243ea6b9fb7a3dc4ce414db1d3[m
+Merge: 46c00a8 70bb10a
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Oct 9 22:22:28 2018 -0700
+
+    Merge branch 'master' of github.com:alberlab/igm
+
+[33mcommit 46c00a827d5dfc3ff933ff4d7dc6807553acdfd2[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Oct 9 22:22:04 2018 -0700
+
+    damid fixing
+
+[33mcommit 70bb10a3100ed71a2b437c7889dc010da3f45861[m
+Merge: ccb493e f284faf
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Thu Oct 4 15:11:46 2018 -0700
+
+    Merge branch 'master' of github.com:alberlab/igm
+
+[33mcommit ccb493e75fcf70e3d63ce88d1dbce3e5a304e2f2[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Thu Oct 4 15:11:40 2018 -0700
+
+    setup.py bug fix
+
+[33mcommit f284faf63eaab757b46a8f1440f20f3374600b98[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Oct 4 14:20:34 2018 -0700
+
+    bugfix - all structgen step use h5repack
+
+[33mcommit c33a9d934eafcdd66a6a3a19f9fe0f0c6789ae5f[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Sep 28 13:52:33 2018 -0700
+
+    clear up for creation of transposed population during preprocessing
+
+[33mcommit 0f6212f3535e26317954f09c09740fbd1b9afb34[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Sep 24 08:36:44 2018 -0700
+
+    IGM folder tracking and improved  UI. Also, now IGM use h5repack to transpose the hss file at the end of the modeling step.
+
+[33mcommit 14a8046288650fe928f5c3c775d616944fc205aa[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Mon Aug 13 13:28:45 2018 -0700
+
+    fix leftover typos in scheme change
+
+[33mcommit 7cf6ecf31d96e6c72f3dc0fb979ce25e9ee19395[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Sun Aug 12 19:11:25 2018 -0700
+
+    rearrange config scheme
+
+[33mcommit a3a2bda0112b0856e1b4b3921bf65dd6cadec903[m
+Merge: 29c7474 151dc22
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Sat Aug 11 17:02:40 2018 -0700
+
+    Merge branch 'master' of github.com:alberlab/igm
+
+[33mcommit 151dc2236c9e23999a34c0dfab578fd0c44150ff[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Aug 9 23:05:09 2018 -0700
+
+    visual tweaks
+
+[33mcommit befcac6fdc8d9badff2f7a04a9b2e246ec0ef31b[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Aug 9 21:47:36 2018 -0700
+
+    bugfixes and small improvements. Tunnel option for igm-server
+
+[33mcommit 29c7474f61f44dccd0bb3181b3a51d79b58a03de[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Thu Aug 9 14:24:03 2018 -0700
+
+    fix Hi-C input
+
+[33mcommit e7976eb67574573bd07ac326fce7f03df38d8eeb[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Aug 8 18:11:18 2018 -0700
+
+    minor ui fix
+
+[33mcommit f0a4c0728a408d6030e3919154f59d09d2ac601a[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Aug 8 17:52:21 2018 -0700
+
+    Fixed iparallel controller progressbar. Async reduce in relax init step. Minor fixes to schema.
+
+[33mcommit 30877a7a57a1e7ad16b9d8b630f7074132c0a6a7[m
+Merge: 05a4a03 a02f1c0
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Aug 7 16:09:56 2018 -0700
+
+    Merge branch 'master' of github.com:alberlab/igm
+
+[33mcommit 05a4a03aad509529cf149c892c884002038e52cb[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Aug 7 16:09:51 2018 -0700
+
+    random seed is now correctly set
+
+[33mcommit a02f1c072ea457513e4537f802a803e03173823a[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Mon Aug 6 20:29:13 2018 -0700
+
+    add min_iter as an argument
+
+[33mcommit b84e56b8ccc9c9616372cbf04197a2e2036b81fa[m
+Merge: 42b339c 7c77e17
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Mon Aug 6 20:28:49 2018 -0700
+
+    merge branch and set package search from ./igm/
+
+[33mcommit 7c77e17b8e1ce6776f6e29bd7849f2db284ead99[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Mon Aug 6 19:14:09 2018 -0700
+
+    small modifications to the schema and server
+
+[33mcommit 42b339c393a0cca5b785e63d9cfaa879de3597e3[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Mon Aug 6 14:10:02 2018 -0700
+
+    change actdist step to have intermediate files
+
+[33mcommit e054b89ad7acfa6a98a65cdfe5ffbd37c7beb7f1[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Aug 3 14:03:21 2018 -0700
+
+    Cleaned up and minor fixes
+
+[33mcommit 847db8cc46809aaa8274bd00c6da90e5ce7f1391[m
+Merge: 31090dc 64acf29
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Aug 3 12:40:08 2018 -0700
+
+    Merge branch 'master' of github.com:alberlab/igm
+
+[33mcommit 31090dc6305893df32ecc5a6d9852afb34db1048[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Aug 3 12:39:47 2018 -0700
+
+    cumulative pack of changes, ui greatly improved
+
+[33mcommit 94cc617efcb936e06e2c57e8c8f9e470553d9ed6[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Tue Jul 24 14:42:15 2018 -0700
+
+    logging total violation, total restraints
+
+[33mcommit 64acf2922dbb3b3fdb5a7cef15643cd29eae6811[m
+Merge: ea397e2 cbaf5ce
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Thu Jul 19 15:48:06 2018 -0700
+
+    Merge branch 'master' of github.com:alberlab/igm
+
+[33mcommit ea397e2b9bbaab533a77ec40ed7dbf05258330d6[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Thu Jul 19 15:48:03 2018 -0700
+
+    actdist step use HssFile mode r
+
+[33mcommit cbaf5cef574567eb556f126c970e473e32d575c3[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Jul 19 14:35:33 2018 -0700
+
+    run_igm.py is now igm-run, and is added to setup.py
+
+[33mcommit 69b4d0efe2bbf1cfae5bc04c16ec97c9d9515295[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Jul 19 14:23:05 2018 -0700
+
+    bugfix
+
+[33mcommit f596da15c16b3625d440f10317a401d2ea45b83a[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Jul 18 17:13:09 2018 -0700
+
+    consecutive contacts less than 1
+
+[33mcommit 256bc7e6ccd336504a00ec8b6dfb6abf7042d4dc[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Jul 17 18:16:40 2018 -0700
+
+    removed the need for a mtx matrix, will read from hcs
+
+[33mcommit 8255fe490007819a7e3f82f1cbd0f750f4612867[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Jun 15 16:15:36 2018 -0700
+
+    bugfix and lammps now prints energy for ellipsoidal envelope
+
+[33mcommit caa0d7e822ef208b6e007a18459ee2d81651c150[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Jun 13 14:41:43 2018 -0700
+
+    collective batch of modifications and improvements
+
+[33mcommit 7da010d6736826f21a2ff2bc08962f5251d31399[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue May 1 11:58:19 2018 -0700
+
+    sprite and damid
+
+[33mcommit 5cd3520eece60678ba9bb7a1669ee3a88aba89ea[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Apr 13 11:01:22 2018 -0700
+
+    Preprocessing does not overwrite the structure file if already present and some minor bugfixes
+
+[33mcommit c1f153d93daf0cd4badb912628774fd259f7c0d3[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Apr 12 16:59:33 2018 -0700
+
+    some major changes, better logging, ui sketch
+
+[33mcommit 6a49676cba18bb573e19808060fa05128cee9574[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Apr 10 12:58:30 2018 -0700
+
+    step tracking and restart
+
+[33mcommit 84f8a836c031f946bd5a9892bb8c30d733450e20[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Mar 30 09:41:48 2018 -0700
+
+    bugfix
+
+[33mcommit 224dcbf3bd68a9dc5139a9610ab44397f509afa4[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Mar 29 15:57:43 2018 -0700
+
+    dask controller and various path fixes
+
+[33mcommit d6b2bf92397de1927672a78a2eb41dfaeabe91a1[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Thu Mar 29 15:26:06 2018 -0700
+
+    various bugfixes
+
+[33mcommit 9b468d13619e56247a5bd2945f35384c26fd7ae5[m
+Merge: 30f9c45 81b8bdb
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Wed Mar 28 18:54:43 2018 -0700
+
+    Merge branch 'master' of github.com:alberlab/igm
+
+[33mcommit 81b8bdbc61699f078e8076374e7c3faacb0871b6[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Tue Feb 27 13:19:08 2018 -0800
+
+    multiploid/male configuration and absolute paths in filenames
+
+[33mcommit 5297a3e92245bdbcd39d9603d638145e5be92b00[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Feb 7 18:59:47 2018 -0800
+
+    fixed tabs
+
+[33mcommit 30f9c45647b398fb108e73f5126844e95beb5998[m
+Merge: bb8f96f 6988b3e
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Wed Feb 7 18:36:57 2018 -0800
+
+    Merge branch with violation tolarence 1.05
+
+[33mcommit bb8f96f3c109efaf1b0577395aeedbecd87d028c[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Wed Feb 7 18:36:52 2018 -0800
+
+    set violation tolerance to 1.05
+
+[33mcommit 6988b3e465c29bf5d47ff97013f5f80c68f3d255[m
+Merge: b30e016 8e48f86
+Author: Asli Yildirim <ayildiri@usc.edu>
+Date:   Wed Feb 7 18:21:55 2018 -0800
+
+    Merge branch 'master' of https://github.com/alberlab/igm
+
+[33mcommit b30e016887361c12ad55484116daf863025f2d15[m
+Author: Asli Yildirim <ayildiri@usc.edu>
+Date:   Wed Feb 7 18:21:29 2018 -0800
+
+    various bugfixes
+
+[33mcommit 8e48f86e98058c7a6d16eb2b4dbe0dd4b0b8a7a4[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Feb 2 17:55:39 2018 -0800
+
+    damid restraint - fix
+
+[33mcommit b8cff31fe338f529d974a65d2a691d5e67980c4f[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Feb 2 17:53:53 2018 -0800
+
+    damid restraint
+
+[33mcommit 8a7fbff408a2970424576d832b1597b644cc773f[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Feb 2 17:31:31 2018 -0800
+
+    fish restraints
+
+[33mcommit ba1442336fe541f53e8993e8d932c41fdaafa75d[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Tue Jan 9 18:45:31 2018 -0800
+
+    add option for psudo phased
+
+[33mcommit 3c1fcd7110614bf464e08dc8879f365aa9dfd47c[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Mon Jan 8 12:28:46 2018 -0800
+
+    add full size population test
+
+[33mcommit 4fd8afa27fc9df8a14e7ced99f615ebfd9c044f8[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Wed Dec 20 13:49:56 2017 -0800
+
+    add HmsFile as tmp file
+
+[33mcommit 0612e4f5a2d3599ac7c4b6f0eee6d2c2ce85e641[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Fri Dec 15 19:10:00 2017 -0800
+
+    add Hms file for recording genome structure
+
+[33mcommit 356aea3ee820d0b14649275872f88e47208101f3[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Fri Dec 1 17:24:35 2017 -0800
+
+    fix some stupid bugs
+
+[33mcommit ac6de8a8736d98279ef1bad93ebcc5963399bc51[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Fri Dec 1 14:30:25 2017 -0800
+
+    fix some more typo bugs
+
+[33mcommit 20772d378d895656645f7d7320aee3cfef533026[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Fri Dec 1 14:27:15 2017 -0800
+
+    fix some typo bugs and add Rao_TAD hic test matrix
+
+[33mcommit c1c42027c8ff756780295249a5c53ccf1d935cd7[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Thu Nov 30 19:54:21 2017 -0800
+
+    add hic with activation distance steps. not tested yet hope it works
+
+[33mcommit 0e17e53968b800c03e622830ef78244ced21bf56[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Thu Nov 30 17:00:58 2017 -0800
+
+    add Hi-C restraint to MStep
+
+[33mcommit 6813773c2a5730f7c62cc535b731ee05c4c634e3[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Wed Nov 22 17:46:36 2017 -0800
+
+    Add RandomInit and RelaxInit step simply working
+
+[33mcommit 0adf1160c445a525d2f97ad7840d7f04700ee1b2[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Wed Nov 22 14:56:21 2017 -0800
+
+    fix ploidy typo
+
+[33mcommit b960baf846bc2dca382932f3c3f107dddeddb8fa[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Wed Nov 22 14:35:46 2017 -0800
+
+    put preprocessing
+
+[33mcommit d196805f53555b1f94ec5b9e8a4ba3f9d40f70be[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Wed Nov 22 14:35:19 2017 -0800
+
+    put preprocessing
+
+[33mcommit 7f1c6f352587cc74f2171b0afdec71ed5499635b[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Wed Nov 22 14:34:07 2017 -0800
+
+    put preprocessing
+
+[33mcommit f0c703b7b9a22858032c5e434f5f58facb28b92c[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Tue Nov 21 19:01:19 2017 -0800
+
+    add cleanup to Step.run()
+
+[33mcommit f575a15133fed769d74a1a798a440ae1d498977c[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Tue Nov 21 18:13:07 2017 -0800
+
+    fix Queue in python3
+
+[33mcommit 8691cb816c67b9890c35a57ded4f2274887fe528[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Tue Nov 21 17:37:09 2017 -0800
+
+    change name of startController
+
+[33mcommit bec9e53e73f37a2c19998d4a08834b8f297b9cf3[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Tue Nov 21 16:54:19 2017 -0800
+
+    config Random init for ipyparallel_basic
+
+[33mcommit 0946ca48ce187d5a10d1f232ee575c315b2d7ea5[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Mon Nov 20 18:14:41 2017 -0800
+
+    add bulk methods and init for random crd gen
+
+[33mcommit 68c576065c3919691e3e4360fa3c2a5931afe9ae[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Mon Nov 20 15:46:02 2017 -0800
+
+    setup parallel framework
+
+[33mcommit bd57cb340eed9ac789d4eb6b8749a22fc490c963[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Mon Nov 20 12:59:39 2017 -0800
+
+    move _appy_model to model class
+
+[33mcommit 1148bb720b81e1bb3bd178f982f96101bc629ceb[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Mon Nov 20 12:50:38 2017 -0800
+
+    adapt config with gpu option
+
+[33mcommit 1ad0901efcf8104a39f01f4252ebccff67171cb6[m
+Merge: 2f25482 817abe7
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Mon Nov 20 12:40:20 2017 -0800
+
+    merged conflict
+
+[33mcommit 2f25482104f8835f05864b95630c0d93fbb4ba08[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Mon Nov 20 12:37:26 2017 -0800
+
+    model adjust
+
+[33mcommit 817abe7c759b677528a4f211d60a9cf3e13965db[m
+Author: Guido Polles <guido.polles@gmail.com>
+Date:   Fri Nov 17 14:40:27 2017 -0800
+
+    parallel_controller
+
+[33mcommit cab9eb8d0e8043b6879b4d6fcc87f7bd746cae2d[m
+Author: Guido Polles <guido.polles@gmail.com>
+Date:   Fri Nov 17 14:39:12 2017 -0800
+
+    changed config and parallel stuff
+
+[33mcommit b1a1e3907e638f43b5ebe8ed13efc7ac94642e05[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Nov 17 11:36:06 2017 -0800
+
+    Mstep map and reduce
+
+[33mcommit 0f055450eca834ea7c4c8ee97f968ac7f39405ea[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Nov 17 10:21:44 2017 -0800
+
+    merge resolution fix
+
+[33mcommit 15cdd57243c1f878acec0ad661619a522e2289fb[m
+Merge: 7a548c2 d054dd1
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Nov 17 10:15:18 2017 -0800
+
+    merge conflict resolution
+
+[33mcommit 7a548c23a793f9c6b5b97f282d8ae8458410d602[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Fri Nov 17 10:05:07 2017 -0800
+
+    improved testing
+
+[33mcommit d054dd1243eecb5a4f8bdfb971f1d2fb5173892d[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Tue Nov 14 18:42:20 2017 -0800
+
+    change configure scheme
+
+[33mcommit 90f110a006d4505a9866711c0859641472b68526[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Tue Nov 14 17:20:44 2017 -0800
+
+    put config_test.json as default
+
+[33mcommit 71cabc89bfefe6140e3d94e0ee88c1de053e074f[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Tue Nov 14 17:20:13 2017 -0800
+
+    put config_test.json as default
+
+[33mcommit 1034b0c13d9c316f084b5ecb091a8760df6e8881[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Tue Nov 14 17:18:33 2017 -0800
+
+    fix bug and add steric effect restraint
+
+[33mcommit e265b496f1d3b10f88aa2ef93a42c1bbe08b3a48[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Tue Nov 14 13:34:27 2017 -0800
+
+    put igm config object
+
+[33mcommit 6d53ecd3505b6d38f534c2d1a8fa9463df3b15d0[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Mon Nov 13 11:54:21 2017 -0800
+
+    Return to use list for particles
+
+[33mcommit f61827da47151453a06151c91caeaa472125f0e2[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Nov 8 18:25:25 2017 -0800
+
+    Lammps and some other changes
+
+[33mcommit 6d0abf11315f1f58ca30f11053ef3e333536f28e[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Fri Nov 3 17:22:23 2017 -0700
+
+    add hic actdist as h5 iterator
+
+[33mcommit e140becc55cc78c8260aad67e75d2f6dda457423[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Fri Nov 3 15:33:22 2017 -0700
+
+    add hic restraints
+
+[33mcommit 853ef2bd048ce10fa5bcdaa0a5897ae25c143273[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Fri Nov 3 14:24:53 2017 -0700
+
+    add some doc
+
+[33mcommit b0da205f4b709e57f698ffba4a64d451920b5a1f[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Thu Nov 2 18:20:58 2017 -0700
+
+    a simple test code
+
+[33mcommit 65304846ead4f00bef87c30da6b31897b1a6b8d0[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Thu Nov 2 18:10:30 2017 -0700
+
+    dir change and work on restraints
+
+[33mcommit d1cc55396f33efda343a90ca48705f98433a7a18[m
+Author: Guido Polles <polles@usc.edu>
+Date:   Wed Nov 1 16:43:22 2017 -0700
+
+    parallel controllers for map/reduce
+
+[33mcommit eee309d1a7b1d43ff44c860746a74c9bb36b9603[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Wed Nov 1 16:33:58 2017 -0700
+
+    model framework
+
+[33mcommit 202bd8d1f672c1712513d24dda59f84dc66fe7ca[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Wed Nov 1 16:17:59 2017 -0700
+
+    model framework
+
+[33mcommit 5d0653e01ff8485763118738f51d2db4bf6693e0[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Tue Oct 31 15:54:14 2017 -0700
+
+    start building up modeling kernel
+
+[33mcommit 191198d58746e6f92ea17b88f6aa413e254bb159[m
+Author: ursinedeity <huanan1991@gmail.com>
+Date:   Tue Oct 31 15:38:36 2017 -0700
+
+    start building up kernel
+
+[33mcommit e76260ed5a46d5079c6c3b289cbbce1425b7471f[m
+Author: Nan Hua <huanan1991@gmail.com>
+Date:   Tue Oct 31 14:18:50 2017 -0700
+
+    Create README.md
+
+[33mcommit d15d8696560e0db5d9f1f40c0facee9b283b86cb[m
+Author: Nan Hua <huanan1991@gmail.com>
+Date:   Thu Oct 5 16:08:10 2017 -0700
+
+    Initial commit
