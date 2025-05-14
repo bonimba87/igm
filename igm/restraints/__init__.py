@@ -10,6 +10,7 @@ from .genenvelope import GenEnvelope
 from .fish        import Fish
 from .inter_hic   import interHiC
 from .intra_hic   import intraHiC
-from .imaging     import Imaging
+from .tracing     import Tracing
 from .centromere  import Centromere
 from .gendamid    import GenDamid
+from .polymer_bis import PolymerDistrib

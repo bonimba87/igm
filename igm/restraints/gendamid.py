@@ -7,7 +7,7 @@ from .restraint import Restraint
 from ..model.forces import ExpEnvelope    # restraint forces associated with damid
 from ..model import Particle
 from ..utils.log import logger
-from ..utils import HmsFile, VolumeFile
+from ..utils import HmsFile, VolumeFile   # this handles the volumetric files (currently in a .bin format)
 
 try:
     UNICODE_EXISTS = bool(type(unicode))
@@ -34,9 +34,12 @@ def snormsq_exp(x, vol):
     if (voxel_xyz >= np.zeros(3)).all()  and (voxel_xyz < vol.nvoxel).all():
 
             # compute distance squared
-            distanza = np.dot((voxel_xyz - vol.matrice[tuple(voxel_xyz)]) * vol.grid,\
-                              (voxel_xyz - vol.matrice[tuple(voxel_xyz)]) * vol.grid)   # distance bead 
-                                                                                                  # surface - surface
+            #distanza = np.dot((voxel_xyz - vol.matrice[tuple(voxel_xyz)][0:3]) * vol.grid,\
+            #                  (voxel_xyz - vol.matrice[tuple(voxel_xyz)][0:3]) * vol.grid)   # distance bead 
+
+
+            distanza = np.dot(x - (vol.matrice[tuple(voxel_xyz)][0:3] * vol.grid + vol.origin), \
+                              x - (vol.matrice[tuple(voxel_xyz)][0:3] * vol.grid + vol.origin))                                                                                                  # surface - surface
     else:
             distanza = np.dot((voxel_xyz - vol.center) * vol.grid, \
                               (voxel_xyz - vol.center) * vol.grid)     # distance to the center of the grid (if nucleoli aut similia)
@@ -92,16 +95,20 @@ class GenDamid(Restraint):
         # here: load volume file, compute distance to lamina of only those particles that are listed in damid_actdist
         # that is a teeny tiny fraction of all the voxels that are listed in he volume file
 
+        #for i, d in self.damid_actdist:
+        #     print(i, d **2, snormsq_exp(model.particles[i].pos, vol))
+
         affected_particles = [
             i for i, d in self.damid_actdist
             if snormsq_exp(
                 model.particles[i].pos, vol     # there is no n_struct here, models (aka, structures) are run indepedently
-                          ) <= d**2    # where does the cutoff enter here?
+                          ) < d**2    # where does the cutoff enter here?
+
         ]
 
         #logger.info('---------------------------------')
-        #logger.info('Number of affected particles = ')
-        #logger.info(len(affected_particles))
+        #logger.info('Particles expected to be close to the lamina = ')
+        #logger.info(affected_particles)
         #logger.info('---------------------------------')
 
         # apply force
@@ -109,7 +116,7 @@ class GenDamid(Restraint):
             ExpEnvelope(
                 affected_particles,
                 self.volume_file,
-                -self.k,    ## we don't need to push this anymore  negative k to inform Lammps we are "pushing" toward the lamina voxels (~ enforce a lamina contact)
+                -self.k,    ## k < 0 only indicates that this a lamina association force, it does not have ny spring constant interpretation anymore)
                 self.contact_range, note = Restraint.DAMID
             )
         )
@@ -122,7 +129,7 @@ class GenDamid(Restraint):
 
 
     def __repr__(self):
-        return 'LaminaDamID[shape={},map={},k={}, cr={}]'.format(self.shape, self.volume_file, self.k, self.contact_range)
+        return 'LaminaDamID[shape={},map={},k={}, cr={}]'.format(self.shape, self.volume_file, -self.k, self.contact_range)
 #==
 
 class DamidActivationDistanceDB(object):

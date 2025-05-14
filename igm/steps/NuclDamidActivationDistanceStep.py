@@ -1,8 +1,7 @@
 #
-#  See Boninsegna et al, 2022, SI: Lamina DamID activtion step, for "sphere" and "ellipsoid".
-#                                                               "exp_map" is new implementation, Feb 2023
+#  See Boninsegna et al, 2022, SI: Lamina DamID activtion step for nucleoli or other nuclear body, for "sphere" and "ellipsoid".
+#                                                               "exp_map" is new implementation, Apr 2023
 #
-
 
 from __future__ import division, print_function
 import numpy as np
@@ -93,8 +92,7 @@ def snormsq_exp(x, volume):
     distanze = []
     
     voxel_xyz = np.round(np.array((x - volume.origin)/volume.grid)).astype(int)  # voxel coordinates are integer numbers
-    
-    
+       
     # loop over structures
     for k in range(voxel_xyz.shape[0]):
     
@@ -102,12 +100,9 @@ def snormsq_exp(x, volume):
         if (voxel_xyz[k] >= np.zeros(3)).all()  and (voxel_xyz[k] < volume.nvoxel).all():
 
             # compute distance squared
-            #distanze.append(np.dot((voxel_xyz[k] - volume.matrice[tuple(voxel_xyz[k])][0:3]) * volume.grid,\
-            #                       (voxel_xyz[k] - volume.matrice[tuple(voxel_xyz[k])][0:3]) * volume.grid))   # distance bead 
-            distanze.append(np.dot(x[k] - (volume.matrice[tuple(voxel_xyz[k])][0:3] * volume.grid + volume.origin), \
-                                   x[k] - (volume.matrice[tuple(voxel_xyz[k])][0:3] * volume.grid + volume.origin)))       
-
-                                                                                           # surface - surface
+            distanze.append(np.dot((voxel_xyz[k] - volume.matrice[tuple(voxel_xyz[k])][0:3]) * volume.grid,\
+                                   (voxel_xyz[k] - volume.matrice[tuple(voxel_xyz[k])][0:3]) * volume.grid))   # distance bead 
+                                                                                                  # surface - surface
         else:
             distanze.append(np.dot((voxel_xyz[k] - volume.center) * volume.grid, \
                                    (voxel_xyz[k] - volume.center) * volume.grid))     # distance to the center of the grid (if nucleoli aut similia)
@@ -122,37 +117,39 @@ snormsq = {
     'exp_map':   snormsq_exp
           }
 
-class DamidActivationDistanceStep(Step):
+class NuclDamidActivationDistanceStep(Step):
+
     def __init__(self, cfg):
 
-        """ The value of DAMID sigma to be used this time around is computed and stored """
+        """ The value of Nucl DAMID sigma to be used this time around is computed and stored """
 
-        # prepare the list of DAMID sigmas in the "runtime" status, unless already there
-        if 'sigma_list' not in cfg.get("runtime/DamID"):
-            cfg["runtime"]["DamID"]["sigma_list"] = cfg.get("restraints/DamID/sigma_list")[:]
+        # prepare the list of nuclDAMID sigmas in the "runtime" status, unless already there
+        if 'sigma_list' not in cfg.get("runtime/nuclDamID"):
+            cfg["runtime"]["nuclDamID"]["sigma_list"] = cfg.get("restraints/nuclDamID/sigma_list")[:]
 
-        # compute current Damid sigma and save that to "runtime" status
-        if "sigma" not in cfg.get("runtime/DamID"):
-            cfg["runtime"]["DamID"]["sigma"] = cfg.get("runtime/DamID/sigma_list").pop(0)
+        # compute current nuclDamid sigma and save that to "runtime" status
+        if "sigma" not in cfg.get("runtime/nuclDamID"):
+            cfg["runtime"]["nuclDamID"]["sigma"] = cfg.get("runtime/nuclDamID/sigma_list").pop(0)
 
         # parameter "iter_corr_knob" to control whether using iterative correction or not
-        if "iter_corr_knob" not in cfg.get("runtime/DamID"):
-            cfg["runtime"]["DamID"]["iter_corr_knob"] = cfg.get("optimization/iter_corr_knob")
+        if "iter_corr_knob" not in cfg.get("runtime/nuclDamID"):
+            cfg["runtime"]["nuclDamID"]["iter_corr_knob"] = cfg.get("optimization/iter_corr_knob")
 
-        if cfg.get('runtime/DamID/iter_corr_knob') == 1:
+        if cfg.get('runtime/nuclDamID/iter_corr_knob') == 1:
             logger.info('Using iterative correction (standard choice)')
         else:
             logger.info('Not using iterative correction (number of contacts may blow up!)')
 
-        super(DamidActivationDistanceStep, self).__init__(cfg)
+        super(NuclDamidActivationDistanceStep, self).__init__(cfg)
+
 
     def name(self):
 
         """ This is printed to logger, and indicates that the DAmid activation step has started """
 
-        s = 'DamidActivationDistanceStep (sigma={:.2f}%, iter={:s})'
+        s = 'NuclDamidActivationDistanceStep (sigma={:.2f}%, iter={:s})'
         return s.format(
-            self.cfg.get('runtime/DamID/sigma', -1) * 100.0,
+            self.cfg.get('runtime/nuclDamID/sigma', -1) * 100.0,
             str( self.cfg.get('runtime/opt_iter', 'N/A') )
         )
 
@@ -162,24 +159,24 @@ class DamidActivationDistanceStep(Step):
         """ Prepare parameters, select those loci with a probabiliry larger than sigma, read in DAMID input file and preprocess by spitting that into batches, produce in.npy files """
 
         # read in damid sigma activation, and the filename containing raw damid data
-        sigma         = self.cfg.get("runtime/DamID/sigma")
-        input_profile = self.cfg.get("restraints/DamID/input_profile")
+        sigma         = self.cfg.get("runtime/nuclDamID/sigma")
+        input_profile = self.cfg.get("restraints/nuclDamID/input_profile")
 
-        last_damidactdist_file = self.cfg.get('runtime/DamID').get("damid_actdist_file", None)
-        batch_size = self.cfg.get('restraints/DamID/batch_size', 100)
+        last_damidactdist_file = self.cfg.get('runtime/nuclDamID').get("damid_actdist_file", None)
+        batch_size = self.cfg.get('restraints/nuclDamID/batch_size', 100)
 
         self.tmp_extensions = [".npy", ".tmp"]
-
-        # define the absolute path to the damid_actist folder
+       
+        # define the absolute path to the /tmp/XXX folder where all the *.in, *.out and *h5fd assignment files are stored 
         self.tmp_dir = make_absolute_path(
-              self.cfg.get('restraints/DamID/tmp_dir', 'damid_actdist'),
-              self.cfg.get('parameters/tmp_dir')
+                self.cfg.get('restraints/nuclDamID/tmp_dir', 'nucldamid_actdist'),
+                self.cfg.get('parameters/tmp_dir')
         )
 
         if not os.path.exists(self.tmp_dir):
             os.makedirs(self.tmp_dir)
 
-        self.keep_temporary_files = self.cfg.get("restraints/DamID/keep_temporary_files", False)
+        self.keep_temporary_files = self.cfg.get("restraints/nuclDamID/keep_temporary_files", False)
 
         # load txt file containing experimental DAMID data, as per configuration json file
         profile = np.loadtxt(input_profile, dtype='float32')
@@ -230,21 +227,25 @@ class DamidActivationDistanceStep(Step):
         volumes_idx         = None
         volume_prefix       = None
 
-        shape = cfg.get('model/restraints/envelope/nucleus_shape')
+        shape = cfg.get('model/restraints/nucleolus/nucleus_shape')
 
+        # need to include the nucleus
         if shape == 'sphere':
-            nucleus_parameters = cfg.get('model/restraints/envelope/nucleus_radius')
+            nucleus_parameters = cfg.get('model/restraints/nucleolus/nucleus_radius')
+
         elif shape == 'ellipsoid':
-            nucleus_parameters = cfg.get('model/restraints/envelope/nucleus_semiaxes')
+            nucleus_parameters = cfg.get('model/restraints/nucleolus/nucleus_semiaxes')
+
         elif shape == 'exp_map':    # map(s) from experiments
-            volumes_idx   = cfg.get('model/restraints/envelope/volumes_idx')      # indexes identifying volume maps
-            volume_prefix = cfg.get('model/restraints/envelope/volume_prefix')    # prefix of volume map file
+            volumes_idx   = cfg.get('model/restraints/nucleolus/volumes_idx')      # indexes identifying volume maps
+            volume_prefix = cfg.get('model/restraints/nucleolus/volume_prefix')    # prefix of volume map file
+
         else:
-            raise NotImplementedError('DamID restraint for shape %s has not been implemented yet.' % shape)
+            raise NotImplementedError('NuclDamID restraint for shape %s has not been implemented yet.' % shape)
 
 
         # read in the iterative correction knob
-        it_corr = cfg.get('runtime/DamID/iter_corr_knob')
+        it_corr = cfg.get('runtime/nuclDamID/iter_corr_knob')
  
         with HssFile(cfg.get("optimization/structure_output"), 'r') as hss:
 
@@ -260,7 +261,7 @@ class DamidActivationDistanceStep(Step):
                  for I, p_exp, plast in params:
                     res = get_damid_actdist_I(
                     int(I), p_exp, plast, hss, it_corr,
-                    contact_range = cfg.get('restraints/DamID/contact_range', 0.05),
+                    contact_range = cfg.get('restraints/nuclDamID/contact_range', 0.05),
                     shape=shape,
                     nucleus_param=nucleus_parameters 
                     )
@@ -269,13 +270,13 @@ class DamidActivationDistanceStep(Step):
 
             elif shape == 'exp_map':
 
-                 n_struct = hss.get_nstruct()
+                 n_struct   = hss.get_nstruct()
                  copy_index = hss.get_index().copy_index
                  
-                 volumes_idx   = cfg.get('model/restraints/envelope/volumes_idx')
-                 volume_prefix = cfg.get('model/restraints/envelope/volume_prefix') 
+                 volumes_idx   = cfg.get('model/restraints/nucleolus/volumes_idx')
+                 volume_prefix = cfg.get('model/restraints/nucleolus/volume_prefix') 
 
-                 results = get_damid_actdist_exp(params, hss, n_struct, copy_index, it_corr, contact_range = cfg.get('restraints/DamID/contact_range', 0.95),
+                 results = get_damid_actdist_exp(params, hss, n_struct, copy_index, it_corr, contact_range = cfg.get('restraints/nuclDamID/contact_range', 0.95),
                                              volumes_idx = volumes_idx, volume_prefix = volume_prefix)
                  
             #-
@@ -292,7 +293,7 @@ class DamidActivationDistanceStep(Step):
 
         # create filename
         damid_actdist_file = os.path.join(self.tmp_dir, "damid_actdist.hdf5")
-        last_damidactdist_file = self.cfg['runtime']['DamID'].get("damid_actdist_file", None)   # stored from the previous iteration
+        last_damidactdist_file = self.cfg['runtime']['nuclDamID'].get("damid_actdist_file", None)   # stored from the previous iteration
 
         loc  = []
         dist = [] 
@@ -316,9 +317,9 @@ class DamidActivationDistanceStep(Step):
 
         # suffix
         additional_data = []
-        if 'DamID' in self.cfg['runtime']:
+        if 'nuclDamID' in self.cfg['runtime']:
             additional_data.append(
-                'DamID_{:.4f}'.format(self.cfg['runtime']['DamID']['sigma']))
+                'nuclDamID_{:.4f}'.format(self.cfg['runtime']['nuclDamID']['sigma']))
         if 'opt_iter' in self.cfg['runtime']:
             additional_data.append(
                 'iter_{}'.format(
@@ -328,21 +329,20 @@ class DamidActivationDistanceStep(Step):
        
         tmp_damid_actdist_file = damid_actdist_file + '.tmp'
  
-        #... write all strapped-together activation distances into a 'h5py.tmp' file
+        #... write to tmp damid actdist file
         with h5py.File(tmp_damid_actdist_file, "w") as h5f:
             h5f.create_dataset("loc", data=np.concatenate(loc))
             h5f.create_dataset("dist", data=np.concatenate(dist))
             h5f.create_dataset("prob", data=np.concatenate(prob))
 
-        # ... define the temporary file into which this iteration is saved for future reference
         swapfile = os.path.realpath('.'.join([damid_actdist_file, ] + additional_data))
 
         if last_damidactdist_file is not None:
              shutil.move(last_damidactdist_file, swapfile)           # rename "last_damidactdist_file" as "swapfile"
-        shutil.move(tmp_damid_actdist_file, damid_actdist_file)      # rename 'hd5f.tmp' as 'hd5f'
+        shutil.move(tmp_damid_actdist_file, damid_actdist_file)
 
         # ... update runtime parameter for next iteration/sigma value
-        self.cfg['runtime']['DamID']["damid_actdist_file"] = damid_actdist_file
+        self.cfg['runtime']['nuclDamID']["damid_actdist_file"] = damid_actdist_file
 
 
 
@@ -353,11 +353,12 @@ class DamidActivationDistanceStep(Step):
         """
 
         self.tmp_dir = make_absolute_path(
-            self.cfg.get('restraints/DamID/tmp_dir', 'damid_actdist'),
+            self.cfg.get('restraints/nuclDamID/tmp_dir', 'damid_actdist'),
             self.cfg.get('parameters/tmp_dir')
         )
         self.damid_actdist_file = os.path.join(self.tmp_dir, "damid_actdist.hdf5")
-        self.cfg['runtime']['DamID']["damid_actdist_file"] = self.damid_actdist_file
+        self.cfg['runtime']['nuclDamID']["damid_actdist_file"] = self.damid_actdist_file
+
 
 def cleanProbability(pij, pexist):
 
@@ -519,7 +520,6 @@ def get_damid_actdist_exp(params, hss, n_struct, copy_index, it_corr, contact_ra
         vol.load_file()
 
         logger.info(volume)
-        logger.info(where_vol)
 
         # this is a batch of all Is that need to be restrained
         for k, (I, p_exp, plast) in enumerate(params):
@@ -551,8 +551,7 @@ def get_damid_actdist_exp(params, hss, n_struct, copy_index, it_corr, contact_ra
                 p = cleanProbability(p_exp, t)
             else:
                 p = p_exp
-                logger.info(I)
-                logger.info(p_exp)
+            
             activation_distance = 1e-9
 
             ii = copy_index[I]
@@ -563,15 +562,9 @@ def get_damid_actdist_exp(params, hss, n_struct, copy_index, it_corr, contact_ra
                  o = min(n_copies * n_struct - 1,
                  int( round(n_copies * n_struct * p ) ) )
 
-                 logger.info(o)
-                 logger.info('\n')
                  # identify the DamID activation distance**2 as the o-th quantile, then take the sqrt
-                 activation_distance = np.sqrt(d_sq[k, o])           
-                 logger.info('\n\n')           
+                 activation_distance = np.sqrt(d_sq[k, o])
     
-                 logger.info(d_sq[k])
-                 logger.info(activation_distance)
-        
             results += [ (i, activation_distance, p) for i in ii ]
 
     return results

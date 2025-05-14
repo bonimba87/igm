@@ -2,6 +2,8 @@ from __future__ import division, absolute_import, print_function
 import numpy as np
 
 from ..utils import VolumeFile
+from ..utils.log import logger
+
 
 # Define "Force" class, and then all the force instances
 
@@ -269,7 +271,7 @@ class ExpEnvelope(Force):
     volume_file: string
         filename, contains all the information about the imaging map (voxels, grid spacings, occupancy)
     k: float
-        elastic constant
+        type of force: k>0 indicates a volume effect; k<0 indicates a lamina association effect
     note : str
         additional information
     contact_range: float (<1)
@@ -305,29 +307,38 @@ class ExpEnvelope(Force):
 
         scores = np.zeros(len(self.particle_ids))
 
+        #print(self.contact_range)
         # load file with volumetric information and parameters
         vol = VolumeFile(self.volume_file)
         vol.load_file()
 
-        center = vol.center
-        origin = vol.origin
-        grid   = vol.grid
+        center = np.array(vol.center)
+        origin = np.array(vol.origin)
+        grid   = np.array(vol.grid)
 
-        # lamina for nucleus
+        #print(f'Grid = {grid}')
+        #print(self.k, vol.body_idx)
+
+        #logger.info(self.contact_range)
+        #logger.info(vol.center)
+
+        # lamina for nucleus (lamina DamID is represented by k<0)
         if (vol.body_idx == 0) and (self.k <0):
 
                 center = center * self.contact_range
                 origin = origin * self.contact_range
                 grid   = grid   * self.contact_range
 
-        # lamian for nucleolus 
-        if (vol.body_idx == 1) and (self.k >0):
+        # lamian for nucleolus (lamina DamID is represented by k<0)
+        if (vol.body_idx == 1) and (self.k <0):
 
                 center = center / self.contact_range
                 origin = origin / self.contact_range
                 grid   = grid   / self.contact_range
                
         nvoxel = vol.nvoxel
+
+        #print(grid)
 
         # discriminate between nucleolus and nucleus
         if vol.body_idx == False:
@@ -351,11 +362,12 @@ class ExpEnvelope(Force):
 
               if (id_int.all() >=0):
 
-                   # pixel is outside the lamina and volume confinement   OR   pixel inside the lamina and lamina DamID
-                   if ((vol.int_matrix[tuple(id_int)] == 0) and (self.k > 0)) or ((vol.int_matrix[tuple(id_int)] != 0) and (self.k < 0)): 
+                   # pixel is outside the lamina and volume confinement   OR   pixel inside the lamina and lamina DamIiD
+                   # (note that tuple(id_int) + (,3) = [id_int[0], d_int[1], id_int[2], 3] = interior index
+                   if ((vol.matrice[tuple(id_int)+(3,)] == 0) and (self.k > 0)) or ((vol.matrice[tuple(id_int)+(3,)] != 0) and (self.k < 0)): 
     
                       # this is the vector (point to envelope), then the vector (center to envelope)
-                      scores[m] = np.linalg.norm(grid * (vol.matrice[tuple(id_int)] - id_int))/np.linalg.norm(grid)
+                      scores[m] = np.linalg.norm(grid * (vol.matrice[tuple(id_int)][0:3] - id_int))/np.linalg.norm(grid)   # * 0.05   # multiply by violation threshold
 
                    # else, in the grid and inside the lamina, no violation, no issue
 
@@ -389,10 +401,10 @@ class ExpEnvelope(Force):
               if (id_int.all()>=0):
 
                   # if inside the body and looking for volume confinemt  OR  outsid the nucleolus but with lamina DaMID
-                  if ((vol.int_matrix[tuple(id_int)] != 0) and (self.k > 0)) or ((vol.int_matrix[tuple(id_int)] == 0) and (self.k < 0)): 
+                  if ((vol.matrice[tuple(id_int)+(3,)] != 0) and (self.k > 0)) or ((vol.matrice[tuple(id_int)+(3,)] == 0) and (self.k < 0)): 
 
                      # this is the vector (point to envelope), then the vector (center to envelope)
-                     scores[m] = np.linalg.norm(grid * (vol.matrice[tuple(id_int)] - id_int))/np.linalg.norm(grid)   # p.pos - center)  # the closest to the envelope
+                     scores[m] = np.linalg.norm(grid * (vol.matrice[tuple(id_int)][0:3] - id_int))/np.linalg.norm(grid) # * 0.05   # p.pos - center)  # the closest to the envelope
 
               # if outside the grid: 
               else:

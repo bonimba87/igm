@@ -1,6 +1,7 @@
 from __future__ import division, print_function
 import numpy as np
 import h5py
+import struct
 from ..model import Model
 from ..restraints.restraint import Restraint
 __hms_version__ = 1
@@ -135,46 +136,31 @@ def h5_create_or_replace_dataset(root, dataname, data, **kwargs):
 
 class VolumeFile(object):
 
+    """ Takes in a binary file .bin with the information about the volume map (is it the nucleus or a nucleolus),
+        nx, ny, nz, the genometric center, the lower leftmost corner, the voxel step and a 4D matrix with info 
+        about each voxel being inside or outside the lamina and its closest lamina voxel under an EDT (Euclidean 
+        Distance Trasform) transformation """
+
     def __init__(self, filename, *args, **kwargs):
           self.filename = filename
 
     def load_file(self):
           
-        f = open(self.filename, "r")
+        with open(self.filename, 'rb') as g:
 
-        # read in nucleus/nuclear body switch
-        self.body_idx = [int(x) for x in next(f).split()][0]
+            self.body_idx = struct.unpack('i', g.read(4))[0]
+            
+            nvoxel = struct.unpack('iii', g.read(12))
 
-        # compute number of voxels per size
-        nvoxel = np.array([int(x) for x in next(f).split()])
+            self.center = struct.unpack('fff', g.read(12))
+            self.origin = struct.unpack('fff', g.read(12))
+            self.grid   = struct.unpack('fff', g.read(12))
+            
+            tot_size = nvoxel[0] * nvoxel[1] * nvoxel[2] * 4
 
-        # "geometric center of the grid"
-        self.center = np.array([float(x) for x in next(f).split()])
-
-        # float information about grid features (origin and grid)
-        self.origin = np.array([float(x) for x in next(f).split()])
-        self.grid   = np.array([float(x) for x in next(f).split()])
-
-        # initialize empty matrices    
-        self.matrice    = np.zeros((nvoxel[0], nvoxel[1], nvoxel[2],3)).astype('int')
-        self.int_matrix = np.zeros((nvoxel[0], nvoxel[1], nvoxel[2])).astype('int')
-
-        for i in range(nvoxel[0] * nvoxel[1] * nvoxel[2]):
-
-                     # read septuplet, (i,j,k) and (EDT[i], EDT[j], EDT[k]), interior/exterior label
-                     a, b, c, edt_a, edt_b, edt_c, in_out = [int(x) for x in next(f).split()]
-
-                     # cast that into EDT matrix
-                     self.matrice[a,b,c] = np.array([edt_a, edt_b, edt_c])
-
-                     # store interior/exterior label
-                     self.int_matrix[a,b,c] = in_out
-
-        # at the end of loop , check if number of remaining lines is consistent with number of map voxels
-        if (i != (nvoxel[0] * nvoxel[1] * nvoxel[2] - 1)):
-                     print(nvoxel[0] * nvoxel[1] * nvoxel[2])
-                     print("ACHTUNG!")
-                     stop
-    
-        self.nvoxel = nvoxel
-
+            matrix_data = struct.unpack("i" * (tot_size), g.read(4 *tot_size))
+            
+            self.matrice = np.array(matrix_data).reshape((nvoxel[0], nvoxel[1], nvoxel[2], 4))
+                                                   # edt(i,j,k)[0], edt(i,j,k)[1], edt(i,j,k)[2], in/out boolean
+            del(matrix_data) 
+            self.nvoxel = nvoxel

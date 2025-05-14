@@ -22,9 +22,10 @@ class Restraint(object):
     ENVELOPE = 6
     EXCLUDED_VOLUME = 7
     NUCL_EXCLUDED_VOLUME = 8
-    IMAGING = 11
+    TRACING = 11
     CENTROMERE = 12
     NUCLDAMID = 13
+    NEW_POLY = 14
     
 
 

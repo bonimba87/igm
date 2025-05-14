@@ -28,17 +28,14 @@ def get_pair_dists(ii, jj, n_bead, n_conf, crd):
     OUTPUT: dists, array (4, n_conf), all diploid distances across all configs in popuations 
     """
 
-    dists = np.empty((4, n_conf))
-    
-    x1 = crd[ii[0], :, :][()]
-    y1 = crd[jj[0], :, :][()]
-    x2 = crd[ii[1], :, :][()]
-    y2 = crd[jj[1], :, :][()]
-        
-    dists[0] = np.linalg.norm( x1-y1, axis=1 )
-    dists[1] = np.linalg.norm( x1-y2, axis=1 )
-    dists[2] = np.linalg.norm( x2-y1, axis=1 )
-    dists[3] = np.linalg.norm( x2-y2, axis=1 )
+    dists = np.empty((len(ii) * len(jj), n_conf))
+
+    count = 0
+
+    for i in range(len(ii)):
+        for j in range(len(jj)):
+
+            dists[count] = np.linalg.norm(crd[ii[i],:,:][()] - crd[jj[j], :, :][()], axis = 1)
 
     return dists        # compute the four diploid distances, across all structures
                             # (i,j), (i,j+n_hapl), (i+n_hapl, j), (i+n_hapl, j+n_hapl)

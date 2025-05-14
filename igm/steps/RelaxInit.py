@@ -10,7 +10,7 @@ from subprocess         import Popen, PIPE
 
 from ..core                           import Step
 from ..model                          import Model, Particle
-from ..restraints                     import Polymer, Envelope, Steric, GenEnvelope, Imaging
+from ..restraints                     import Polymer, PolymerDistrib, Envelope, Steric, GenEnvelope, Tracing
 from ..utils                          import HmsFile
 from ..parallel.async_file_operations import FilePoller
 from ..utils.log                      import logger
@@ -105,6 +105,7 @@ class RelaxInit(Step):
 
         # extract structure information
         hssfilename = cfg["optimization"]["structure_output"]
+        logger.info(hssfilename)
 
         # read index, radii, coordinates
         with HssFile(hssfilename, 'r') as hss:
@@ -120,13 +121,38 @@ class RelaxInit(Step):
         for i in range(n_particles):
             model.addParticle(crd[i], radii[i], Particle.NORMAL)
 
-        # ========Add polymer/nucleoli restraints =========
+        logger.info('Number of physical particles/domains = ')
+        logger.info(n_particles)
+
+        # ========Add EXCLUDED VOLUME restraints =========
 
         # add excluded volume restraint
         ex = Steric(cfg.get("model/restraints/excluded/evfactor"))
         model.addRestraint(ex)
 
-        # add nucleus envelope restraint (spherical, ellipsoidal OR from data)
+        # ======= ADD CHAIN CONNECTIVITY: either homopolymer or a distance distribution ======
+
+        if 'polymer' in cfg['model']['restraints']:
+              # add consecutive polymer restraint
+              contact_probabilities = cfg['runtime'].get('consecutive_contact_probabilities', None)
+              pp = Polymer(index,
+                     cfg['model']['restraints']['polymer']['contact_range'],
+                     cfg['model']['restraints']['polymer']['polymer_kspring'],
+                     contact_probabilities=contact_probabilities)
+              model.addRestraint(pp)
+
+        else:
+              logger.info(cfg['restraints']['polymer']['assignment_file'])
+              logger.info(cfg['restraints']['polymer']['tolerance'])
+
+              pp = PolymerDistrib(index = index, kspring = cfg['restraints']['polymer']['polymer_kspring'], 
+                                  tolerance = cfg['restraints']['polymer']['tolerance'], struct_id = struct_id,
+                                  polymer_assignment_file = cfg['runtime']['polymer']['assignment_file'])
+
+              model.addRestraint(pp)
+
+        # ======= ADD NUCLEAR VOLUME CONFINEMENT  add nucleus envelope restraint (spherical, ellipsoidal OR from data) ====
+
         if cfg['model']['restraints']['envelope']['nucleus_shape'] == 'sphere':
             ev = Envelope(cfg['model']['restraints']['envelope']['nucleus_shape'],
                           cfg['model']['restraints']['envelope']['nucleus_radius'],
@@ -137,58 +163,49 @@ class RelaxInit(Step):
                           cfg['model']['restraints']['envelope']['nucleus_kspring'])
         elif cfg['model']['restraints']['envelope']['nucleus_shape'] == 'exp_map':
 
-            logger.info('WARNING:')
-            logger.info('Did you remember to double check if fix_volumetric_restraint.h initializes a large enough matrix?')
 
             volume_prefix = cfg.get('model/restraints/envelope/volume_prefix')
             volumes_idx   = cfg.get('model/restraints/envelope/volumes_idx')
 
-            if len(volumes_idx) > 1:
-                   volume_file = volume_prefix + str(volumes_idx[struct_id]) + '.txt'
-            else:
-                   volume_file = volume_prefix + str(volumes_idx[0]) + '.txt'
+            # if this structure does not have a volume assigned, just use a spherical shape
+            idx = struct_id % len(volumes_idx)
+
+            volume_file = volume_prefix + str(volumes_idx[idx]) + '.bin'
 
             ev = GenEnvelope(shape = cfg['model']['restraints']['envelope']['nucleus_shape'],
                              volume_file = volume_file,
                              k = cfg['model']['restraints']['envelope']['nucleus_kspring'])
+            logger.info(volume_file)
+                  
 
         model.addRestraint(ev)
-
-        # add consecutive polymer restraint
-        contact_probabilities = cfg['runtime'].get('consecutive_contact_probabilities', None)
-        pp = Polymer(index,
-                     cfg['model']['restraints']['polymer']['contact_range'],
-                     cfg['model']['restraints']['polymer']['polymer_kspring'],
-                     contact_probabilities=contact_probabilities)
-        model.addRestraint(pp)
+        logger.info(model.forces[-1])
+        logger.info('Added the lamina volume confinement')
 
 
-        # LB imaging data
-        if "imaging" in cfg['restraints']:
+        # ===== ADD TRACING DATA =====
 
-            kspring = cfg['restraints']['imaging']['kspring']
-            #rad_tol = cfg['restraints']['imaging']['rad_tol'] # nm, this is the number one loops over in igm_run
+        if "tracing" in cfg['restraints']:
 
-            imaging_assignment_file = cfg['restraints']['imaging']['assignment_file']
+            kspring                 = cfg['restraints']['tracing']['kspring']
+            tracing_assignment_file = cfg['restraints']['tracing']['assignment_file']
 
             # need to use one reference tolerance value
-            rad_tol = 400   # in nm, this is to loop over
+            rad_tol = 50   # in nm, this is to loop over [NOT in the relax step]
 
-            print('tolerance = ' + str(rad_tol))
-            print('struct_id = ' + str(struct_id))
-            print('spring k   = ' + str(kspring))
+            logger.info('Positioning traced loci into their target positions with tolerance = ')
+            logger.info(rad_tol)
 
             # add "Imaging" class restraints
-            imag = Imaging(
-                imaging_assignment_file,
+            imag = Tracing(
+                tracing_assignment_file,
                 radial_tolerance = rad_tol,
                 struct_id = struct_id,
                 k = kspring
             )
 
             model.addRestraint(imag)
-            #monitored_restraints.append(imag)
-
+ 
 
         # LB: add nuclear body "excluded volume" restraints (keep chromosomes out of nucleolar region)
         if 'nucleolus' in cfg['model']['restraints']:
@@ -197,18 +214,18 @@ class RelaxInit(Step):
             nucleolus_idx    = cfg.get('model/restraints/nucleolus/volumes_idx')
             elastic          = cfg.get('model/restraints/nucleolus/nucleus_kspring')
 
-            if len(nucleolus_idx) > 1:
-                   nucleolus_file = nucleolus_prefix + str(nucleolus_idx[struct_id]) + '.txt'
-            else:
-                   nucleolus_file = nucleolus_prefix + str(nucleolus_idx[0]) + '.txt'
+
+            idx = struct_id % len(nucleolus_idx)
+            nucleolus_file = nucleolus_prefix + str(nucleolus_idx[idx]) + '.bin'
 
             nucl = GenEnvelope(shape = cfg['model']['restraints']['nucleolus']['nucleus_shape'],
                              volume_file = nucleolus_file,
                              k = elastic)
 
-            logger.info(elastic)
-
             model.addRestraint(nucl)
+            logger.info(nucleolus_file)
+
+            logger.info('No nucleolus!')                
 
         logger.info(model.forces[-4])
         logger.info(model.forces[-3])
@@ -220,7 +237,7 @@ class RelaxInit(Step):
         # set "run_name" variable into "runtime" dictionary 
         cfg['runtime']['run_name'] = cfg['runtime']['step_hash'] + '_' + str(struct_id)
        
-        logger.info('igm.model object created! Now converting to lammps and optimizing...')
+        logger.info('igm.model object created! Now preparing scripts to run lammps and optimizing...')
  
         # run optimization of the structures, by enforcing excluded volume, polymer and envelope restraints
         model.optimize(cfg)

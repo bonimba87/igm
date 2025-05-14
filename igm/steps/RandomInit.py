@@ -16,6 +16,8 @@ from ..utils.log import print_progress, logger
 from ..utils.files import make_absolute_path
 from hashlib import md5
 
+import h5py
+
 class RandomInit(Step):
 
     def __init__(self, cfg):
@@ -48,7 +50,12 @@ class RandomInit(Step):
 
         logger.info(hssfilename)
 
+        logger.info(' Strcuture id = ')
+        logger.info(struct_id)
+        logger.info('\n')
+
         nucleus_radius = cfg.get("model/init_radius")
+        logger.info('Radius of initialization sphere enclosing the genome = ')
         logger.info(nucleus_radius)
         
         with HssFile(hssfilename,'r') as hss:
@@ -57,7 +64,48 @@ class RandomInit(Step):
 
         crd = generate_territories(index, nucleus_radius)
 
+        # if some spots are traced and we know their location, override the "territories" initialization
+        # and interpolate the others
+
+        if "tracing" in cfg['restraints']:
+
+             logger.info('Interpolate between tracing data (if applicable)')
+
+             tracing_input = h5py.File(cfg['restraints']['tracing']['assignment_file'], 'r')
+
+             assignment     = tracing_input['assignment'][()]
+             target         = tracing_input['target'][()]
+             locus          = tracing_input['locus'][()]
+
+             # identify loci that are assigned to this structure
+             here_loci      = np.where(assignment == struct_id)[0]
+
+             # rewrite coordinates of those loci that have been imaged
+             for j in here_loci:         
+                   crd[locus[j], :] = target[j]
+
+             # consider all the other loci and interpolate: interpolation only works if there is something to interpolate
+             for i in range(len(here_loci) - 1):
+
+                  pin_1 = locus[here_loci[i]]
+                  pin_2 = locus[here_loci[i+1]]
+    
+                  if pin_2 - pin_1 > 1:
+                      for m, k in enumerate(range(pin_1 +1, pin_2)):
+                           crd[k, :] = crd[pin_1,:] + (m+1) * (crd[pin_2,:] - crd[pin_1,:])/(pin_2 - pin_1) 
+
+             if 'init_noise' in cfg['model']:
+
+                  logger.info(cfg['model']['init_noise'])
+
+                  # apply simulation noise to the initial coordinates, assuming it is applicable
+                  crd = crd + cfg['model']['init_noise'] * np.random.randn(crd.shape[0], 3)
+                      
+        else:
+             logger.info('Use random initialization of the territories')
+ 
         ofname = os.path.join(tmp_dir, 'random_%d.hms' % struct_id)
+
         with HmsFile(ofname, 'w') as hms:
             hms.saveCoordinates(struct_id, crd)
 

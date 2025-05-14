@@ -18,6 +18,7 @@ cfgfile = os.path.abspath(sys.argv[1])
 
 # create a process and pass a 'value' to it, which is the igm configuration file 
 def run_pipeline(cfgfile):
+
     #===start pipeline with configure file
     try:
 
@@ -33,13 +34,14 @@ def run_pipeline(cfgfile):
         # register repulisti function to run at the end
         atexit.register(rmfiles)
 
-        igm.logger.info('ACHTUNG: make sure the data sources to be used in the modeling have been correctly preprocessed!')
+        igm.logger.info('ACHTUNG: make sure the data sources to be used in the modeling have been correctly preprocessed and that input files are correctly stored!')
+
         # read configuration file (.json) and get the parameters ready
         cfg = igm.Config(cfgfile)
+        igm.logger.info('Starting IGM pipeline. Configuration from ' + cfgfile)
 
         # Set up logger
         igm.SetupLogging(cfg)
-        igm.logger.info('Starting IGM pipeline. Configuration from ' + cfgfile)
 
         # Preprocess genome, index and allocate disk space for genome structures
         igm.Preprocess(cfg)
@@ -57,16 +59,24 @@ def run_pipeline(cfgfile):
                     copyfile(starting_coordinates, cfg.get("optimization/structure_output"))
                 except SameFileError:
                     pass
-            #-
-        #-
+        
         # ... or generate random initial coordinates w territories and relax them to avoid steric clashes
         else:
-            igm.logger.info('Generating random initial coordinates...')
+            igm.logger.info('Generating random initial coordinates within territories...')
             randomStep = igm.RandomInit(cfg)
             randomStep.run()
             igm.logger.info('\n')
 
-            igm.logger.info('Relaxing those random configurations...')
+            # LB Polymer_assignment_step to reproduce distribution of distances
+            if 'polymer' not in cfg['model']['restraints']:
+                   igm.logger.info('Assigning distance distributions to the polymer chain...')
+                   polyStep = igm.PolymerAssignmentStep(cfg)
+                   polyStep.run()
+                   igm.logger.info('\n')
+            else:
+                   igm.logger.info('Using a homopolymer model for the chromatin fiber...')
+
+            igm.logger.info('Relaxing those random configurations w polymer and volume confinements...')
             relaxStep = igm.RelaxInit(cfg)
             relaxStep.run()
             igm.logger.info('\n')
@@ -96,24 +106,34 @@ def run_pipeline(cfgfile):
             iter_steps = []
 
             # --- ASSIGNMENT STEP: population from previous iteration used to compute latent varaibles ---#
+            if 'polymer' in cfg['restraints']:
+                igm.logger.info('Using distributions to define chain distances...')
+                iter_steps.append(igm.PolymerAssignmentStep)
+
             if 'nucleolus' in cfg['restraints']:
 
                 # no need of A-step here: all loci are subjected to the nucleolar excluded volume force
                 igm.logger.info('Using nucleolus volume maps as data ...')
 
-            if 'imaging' in cfg['restraints']:
+            if 'nuclDamID' in cfg['restraints']:
+                iter_steps.append(igm.NuclDamidActivationDistanceStep)
+                igm.logger.info('      Using Nuclear Body DamID data in modeling...')
+
+            if 'tracing' in cfg['restraints']:
+
+                # this would probably go to some kind of an Assignment Step
  
                 # this is the _init function of the Step.py class: we only need the tolerance value set up
                 # prepare the list of imaging tolerances in the "runtime" status, unless already there
-                if 'tol_list' not in cfg.get("runtime/imaging"):
-                   cfg["runtime"]["imaging"]["tol_list"] = cfg.get("restraints/imaging/tol_list")[:]
+                if 'tol_list' not in cfg.get("runtime/tracing"):
+                   cfg["runtime"]["tracing"]["tol_list"] = cfg.get("restraints/tracing/tol_list")[:]
 
                 # compute current imaging distance tolerance and save that to "runtime" status
-                if  'tol'  not in cfg.get("runtime/imaging"):
-                    cfg["runtime"]["imaging"]["tol"]      = cfg.get("runtime/imaging/tol_list").pop(0)
+                if  'tol'  not in cfg.get("runtime/tracing"):
+                    cfg["runtime"]["tracing"]["tol"]      = cfg.get("runtime/tracing/tol_list").pop(0)
 
                 #iter_steps.append(igm.ImagedLociAssignmentStep)
-                igm.logger.info('      Using imaged loci in modeling...')
+                igm.logger.info('      Using chromatin-traced loci in modeling...')
 
             if 'Hi-C'      in cfg['restraints']:
                 iter_steps.append(igm.ActivationDistanceStep)
@@ -146,7 +166,7 @@ def run_pipeline(cfgfile):
                 step.run()
                 igm.logger.info('\n')
 
-            igm.logger.info('A/M iteration OK, now checking fraction of violations in the population')
+            igm.logger.info('A/M iteration completed, now checking convergence (i.e., fraction of violations)')
 
             # -------- check the violations ------ #
 
@@ -154,8 +174,7 @@ def run_pipeline(cfgfile):
             # "is_acceptable" = True, if violation score is smaller than tolerance
             is_acceptable = cfg.get("runtime/violation_score") < cfg.get("optimization/max_violations")    # this is cumulative
 
-            igm.logger.info('                       Fraction of violations from iteration   = ' + str(cfg.get("runtime/violation_score")))
-            igm.logger.info('Maximal fraction of violations for a successful A/M iteration  = ' + str(cfg.get("optimization/max_violations")))
+            igm.logger.info('                  Fraction of violations from this iteration   = ' + str(cfg.get("runtime/violation_score")) + ' (' + str(cfg.get("optimization/max_violations")) + ')')
 
             # HiC: "is_his_incomplete' = True, if there are still HiC-sigma values to explore
             is_hic_incomplete = (
@@ -174,6 +193,14 @@ def run_pipeline(cfgfile):
             )
             is_damid_done = not is_damid_incomplete
 
+            # NuclDamid: "is_nucldamid_incomplete" = True, if there are still Nucl DamiD-sigma values to explore
+            is_nucldamid_incomplete = (
+                ('nuclDamID' in cfg['restraints'] ) and
+                    ( len( cfg.get("runtime/nuclDamID/sigma_list") ) != 0 )
+            )
+            is_nucldamid_done = not is_nucldamid_incomplete
+
+ 
             # FISH "is_fish_incomplete" = True, if there are still fish_tol values to explore
             is_fish_incomplete = (
                 ('FISH' in cfg['restraints']) and 
@@ -188,12 +215,12 @@ def run_pipeline(cfgfile):
             )
             is_sprite_done = not is_sprite_incomplete
 
-            # super-resolution imagin gdata
-            is_imaging_incomplete = (
-                ('imaging' in cfg['restraints']) and
-                    ( len( cfg.get("runtime/imaging/tol_list")) !=0)
+            # chromating tracing data
+            is_tracing_incomplete = (
+                ('tracing' in cfg['restraints']) and
+                    ( len( cfg.get("runtime/tracing/tol_list")) !=0)
             )
-            is_imaging_done = not is_imaging_incomplete
+            is_tracing_done = not is_tracing_incomplete
 
             # if min_iter iterations have not been run yet, and at least one iteration has been run...
             force_next_iteration = (opt_iter < min_iter - 1) and ( opt_iter != 0 )
@@ -202,7 +229,7 @@ def run_pipeline(cfgfile):
             # this circumvents the "force_last_iteration = False" in the configuration file
             if  (
                     cfg.get('optimization/force_last_iteration', False) and
-                    is_hic_done and is_damid_done and is_fish_done and is_sprite_done and is_imaging_done and 
+                    is_hic_done and is_damid_done and is_fish_done and is_sprite_done and is_tracing_done and is_nucldamid_done and 
                     opt_iter == 0
                 ):
                 force_next_iteration = True
@@ -235,6 +262,12 @@ def run_pipeline(cfgfile):
                     # reset iteration number counter
                     opt_iter = 0
 
+                if is_nucldamid_incomplete:
+                    # ... remove current nuclDamiD sigma value from cfg["runtime"], and move on to the next
+                    del cfg["runtime"]["nuclDamID"]["sigma"]
+                    # reset iteration number counter
+                    opt_iter = 0
+
                 if is_fish_incomplete:
                     # ... remove current DamiD sigma value from cfg["runtime"], and move on to the next
                     del cfg["runtime"]["FISH"]["tol"]
@@ -247,13 +280,13 @@ def run_pipeline(cfgfile):
                     # reset iteration number counter
                     opt_iter = 0
 
-                if is_imaging_incomplete:
+                if is_tracing_incomplete:
                     # ... remove currenct tolerance value from cfg["runtime"], and move on to the next
-                    del cfg["runtime"]["imaging"]["tol"]
+                    del cfg["runtime"]["tracing"]["tol"]
                     opt_iter = 0
 
                 # ... or, if lists of thresholds have been swept over fully, exit the pipeline successfully
-                if is_hic_done and is_damid_done and is_fish_done and is_sprite_done and is_imaging_done:
+                if is_hic_done and is_damid_done and is_fish_done and is_sprite_done and is_tracing_done and is_nucldamid_done:
 
                     igm.logger.info('Pipeline completed')
                     open('completed', 'w').close()

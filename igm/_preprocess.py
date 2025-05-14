@@ -114,6 +114,9 @@ def Preprocess(cfg):
     #Generate genome, index objects (as in alabtools)
     genome, index = PrepareGenomeIndex(cfg)
 
+    logger.info(genome)
+    logger.info(index.chrom)
+
     # number of structures in population, number of beads
     nstruct = cfg['model']['population_size']
     logger.info('Population size = ' + str(nstruct))
